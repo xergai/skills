@@ -1,0 +1,108 @@
+# Xerg
+
+Find wasted AI spend in OpenClaw, Hermes, Claude Code, Cursor, and any framework that can export a JSON event payload.
+
+Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw and Hermes logs, Claude Code session transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates confirmed waste from savings opportunities, and lets you measure fixes with `--compare`.
+
+Everything runs locally by default. The CLI is publicly installable from npm as `@xerg/cli`, but it is not open source. No account is required for local audits. Hosted sync and hosted MCP are optional paid workspace features.
+
+The `npx @xerg/cli` path fetches and executes the published npm package before running Xerg. If you want to avoid that fetch on each use, install the CLI globally with `npm install -g @xerg/cli`.
+
+## Install
+
+Install this skill into any agent that supports the Agent Skills standard (Claude Code, Codex, Cursor, and others):
+
+```bash
+npx skills add xergai/skills
+```
+
+Then ask your agent to audit your AI spend. The agent runs the CLI itself and explains the findings.
+
+Install the CLI directly:
+
+```bash
+npm install -g @xerg/cli
+```
+
+Or run without installing:
+
+```bash
+npx @xerg/cli init
+```
+
+## What It Finds
+
+- **Retry waste** - failed calls that burned spend before a later success
+- **Loop waste** - runs that exceeded efficient iteration bounds
+- **Context bloat** - input token volume far above the workflow baseline
+- **Downgrade candidates** - expensive models on operationally simple tasks
+- **Idle waste** - recurring heartbeat or monitoring loops worth reviewing
+
+Local JSON findings can include `signalSource`, `ruleId`, and evidence references so agents can distinguish observed signals from inferred or legacy unknown provenance. Compare output leads with normalized waste rate and per-unit rows before workload-dependent spend deltas.
+
+## Quick Start
+
+Interactive first run (humans):
+
+```bash
+xerg init
+xerg audit --compare
+```
+
+Non-interactive path (agents, scripts, CI):
+
+```bash
+xerg doctor
+xerg audit --json
+xerg audit --json --compare
+```
+
+Add `--runtime openclaw`, `--runtime hermes`, or `--runtime claude-code` when more than one runtime is detected.
+
+## Sources
+
+- Local machine: OpenClaw, Hermes, and Claude Code (`xerg audit --runtime claude-code`)
+- Local Cursor usage export: `xerg audit --cursor-usage-csv ./cursor-usage.csv`
+- Any framework's exported event payload: `xerg ingest --file payload.json`
+- Remote OpenClaw sources via SSH or configured remote transports
+
+If local defaults are empty, inspect the target directly first with `xerg doctor --remote user@host`.
+
+## Optional Hosted Follow-Up
+
+```bash
+xerg connect
+xerg mcp-setup
+```
+
+- `connect` offers browser auth and pushing the latest audit
+- `mcp-setup` prints or writes hosted MCP config for supported clients
+- local audits and compare remain available if you skip hosted setup
+
+## Security And Data Flow
+
+- Local audits read OpenClaw, Hermes, Claude Code, Cursor usage, or ingest payload files and may write local JSON snapshots for `--compare`.
+- Remote OpenClaw audits pull selected files to local temporary storage before analysis.
+- Xerg Cloud sync only happens when you run `connect`, `audit --push`, or `push`.
+- Push payloads include audit totals, rollups, findings, recommendations, comparison deltas, and source metadata. They exclude raw prompt and response content, local source file paths, local snapshot store paths, and internal finding details.
+- Rollup-level provenance (per-finding `signalSource`, waste-by-signal-source totals, and pricing coverage counts) is carried on the wire; evidence references and internal details stay local.
+
+## CI And Automation
+
+```bash
+xerg audit --push --fail-above-waste-rate 0.25
+xerg audit --fail-above-waste-usd 100
+xerg audit --json
+```
+
+## Links
+
+- Docs: [xerg.ai/docs](https://xerg.ai/docs)
+- Skill: [xerg.ai/skill.md](https://xerg.ai/skill.md)
+- npm: [@xerg/cli](https://www.npmjs.com/package/@xerg/cli)
+- Pilot: [xerg.ai/pilot](https://xerg.ai/pilot)
+- Support: `query@xerg.ai`
+
+## Ownership
+
+This skill is maintained by [Xerg](https://xerg.ai) and synced to the public [xergai/skills](https://github.com/xergai/skills) repo from the Xerg release train, versioned with `@xerg/cli`. The skill content is free to install and use with any agent; the Xerg CLI it drives is publicly installable from npm but not open source.
