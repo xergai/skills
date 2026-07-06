@@ -6,7 +6,7 @@ Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts
 
 Everything runs locally by default. The CLI is publicly installable from npm as `@xerg/cli`, but it is not open source. No account is required for local audits. Hosted sync and hosted MCP are optional paid workspace features.
 
-The `npx @xerg/cli` path fetches and executes the published npm package before running Xerg. If you want to avoid that fetch on each use, install the CLI globally with `npm install -g @xerg/cli`.
+The `npx @xerg/cli@latest` path fetches and executes the published npm package before running Xerg. If you want to avoid that fetch on each use, install the CLI globally with `npm install -g @xerg/cli`.
 
 ## Install
 
@@ -27,7 +27,7 @@ npm install -g @xerg/cli
 Or run without installing:
 
 ```bash
-npx @xerg/cli init
+npx @xerg/cli@latest init
 ```
 
 ## What It Finds

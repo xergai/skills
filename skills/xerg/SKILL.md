@@ -53,8 +53,8 @@ Xerg is a local-first CLI for finding wasted AI spend in OpenClaw, Hermes, Claud
 Use the non-interactive commands. Do not run `xerg init` unless the user explicitly asks for guided interactive setup — it is TTY-only and prompts for input.
 
 ```bash
-npx @xerg/cli doctor
-npx @xerg/cli audit --json
+npx @xerg/cli@latest doctor
+npx @xerg/cli@latest audit --json
 ```
 
 1. Run `doctor` first. It reports which local sources exist (OpenClaw, Hermes, Claude Code) and which default paths were checked.
@@ -63,18 +63,18 @@ npx @xerg/cli audit --json
 4. If the user applies a fix, re-run the same audit with `--compare` to report the before/after delta:
 
 ```bash
-npx @xerg/cli audit --json --compare
+npx @xerg/cli@latest audit --json --compare
 ```
 
 If no local data is found, `doctor` prints the paths it checked. Fallbacks:
 
-- Cursor usage CSV export: `npx @xerg/cli audit --cursor-usage-csv ./cursor-usage.csv`
+- Cursor usage CSV export: `npx @xerg/cli@latest audit --cursor-usage-csv ./cursor-usage.csv`
 - Claude Code transcripts elsewhere: `--claude-code-dir <path>`
-- Any framework's exported event payload: `npx @xerg/cli ingest --file payload.json`
-- Remote OpenClaw over SSH: `npx @xerg/cli audit --remote user@host`
-- Railway-hosted OpenClaw: `npx @xerg/cli audit --railway`
+- Any framework's exported event payload: `npx @xerg/cli@latest ingest --file payload.json`
+- Remote OpenClaw over SSH: `npx @xerg/cli@latest audit --remote user@host`
+- Railway-hosted OpenClaw: `npx @xerg/cli@latest audit --railway`
 
-If `xerg` is installed globally, use `xerg` in place of `npx @xerg/cli`.
+If `xerg` is installed globally, use `xerg` in place of `npx @xerg/cli@latest`.
 
 ## What It Audits
 
