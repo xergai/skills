@@ -86,12 +86,16 @@ If `xerg` is installed globally, use `xerg` in place of `npx @xerg/cli@latest`.
 
 ## What It Finds
 
-- Retry waste from failed calls before a later success
-- Loop waste from runs that exceed efficient iteration bounds
-- Context bloat from unusually large inputs
+- Retry waste from failed calls before a later success (explicit or transcript-inferred on session sources)
+- Loop waste from runs that exceed efficient iteration bounds, and repeated identical tool sequences
+- Context bloat from unusually large inputs, and per-session context growth that compaction would cut
+- Cache-write churn where prompt-cache premiums are paid without reuse
 - Downgrade candidates where cheaper models may be enough
-- Idle spend from recurring heartbeat or monitoring loops
+- Idle spend from fixed-cadence scheduled loops
 - Per-agent spend attribution, including delegated sub-agent spend for Claude Code sidechains and ingest payloads
+- Cost per outcome when runs carry outcome signals; declare outcomes with `xerg outcome --workflow <name> --status success|failure`
+
+Costs are priced across input, output, cache read, and cache write tokens using a catalog covering hundreds of current models. Run `xerg doctor --verbose` to see per-file extraction coverage (which economic signals the parser found).
 
 ## Optional Cloud
 
