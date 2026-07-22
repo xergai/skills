@@ -73,6 +73,8 @@ If no local data is found, `doctor` prints the paths it checked. Fallbacks:
 - Claude Code transcripts elsewhere: `--claude-code-dir <path>`
 - Hermes profile database: `--runtime hermes --state-db <path>`
 - Any framework's exported event payload: `npx @xerg/cli@latest ingest --file payload.json`
+- Existing sanitized OpenClaw trace capture: `npx @xerg/cli@latest audit --otlp-file <capture.jsonl>`
+- New local OpenClaw trace capture: `npx @xerg/cli@latest collect openclaw` (interactive until `Ctrl-C`; use only when the user asks to collect a workload)
 - Remote OpenClaw over SSH: `npx @xerg/cli@latest audit --remote user@host`
 - Railway-hosted OpenClaw: `npx @xerg/cli@latest audit --railway`
 
@@ -81,6 +83,7 @@ If `xerg` is installed globally, use `xerg` in place of `npx @xerg/cli@latest`.
 ## What It Audits
 
 - OpenClaw gateway logs and session transcripts
+- Optional independent OpenClaw trace captures created by the loopback traces-only collector
 - Hermes v0.17+ `state.db` (read-only), with legacy log/transcript fallback where present
 - Claude Code session transcripts via `xerg audit --runtime claude-code`
 - Cursor usage CSV exports via `xerg audit --cursor-usage-csv ./cursor-usage.csv`
@@ -97,10 +100,13 @@ If `xerg` is installed globally, use `xerg` in place of `npx @xerg/cli@latest`.
 - Per-agent spend attribution, including delegated sub-agent spend for Claude Code sidechains and ingest payloads
 - Cost per outcome when runs carry outcome signals; declare outcomes with `xerg outcome --workflow <name> --status success|failure`
 - Separate local Hermes mechanical metrics when the optional observer is enabled; these have no dollar classification, recommendation impact, or CI-gate effect
+- Separate local OpenClaw `toolActivity` and `workloadEconomics` blocks; these are neutral evidence and never affect findings, recommendations, waste totals, or CI gates
 
 Costs are priced across input, output, cache read, and cache write tokens using a catalog covering hundreds of current models. Run `xerg doctor --verbose` to see per-file extraction coverage (which economic signals the parser found).
 
 For current Hermes, use `xerg audit --runtime hermes`; Xerg prefers `~/.hermes/state.db`. Use `--state-db` for another profile. `--state-db` is mutually exclusive with legacy `--log-file` and `--sessions-dir`. The optional `xergai/hermes-observer` plugin writes content-free local events under `~/.hermes/xerg/events/`; it never adds economic calls or sends data to Xerg Cloud.
+
+For OpenClaw traces, `xerg collect openclaw` binds only to `127.0.0.1`, accepts OTLP/HTTP protobuf traces, persists a bounded sanitized capture, and audits after shutdown. It does not modify OpenClaw configuration or push automatically. `--otlp-file` is independent and cannot be combined with transcript, log, other-runtime, or remote sources.
 
 ## Optional Cloud
 
