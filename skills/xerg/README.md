@@ -2,7 +2,7 @@
 
 Find wasted AI spend in OpenClaw, Hermes, Claude Code, Cursor, and any framework that can export a JSON event payload.
 
-Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw and Hermes logs, Claude Code session transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates confirmed waste from savings opportunities, and lets you measure fixes with `--compare`.
+Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw logs/transcripts, Hermes v0.17+ `state.db`, Claude Code transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates confirmed waste from savings opportunities, and lets you measure fixes with `--compare`.
 
 Everything runs locally by default. The CLI is publicly installable from npm as `@xerg/cli`, but it is not open source. No account is required for local audits. A free hosted workspace keeps the last 30 days of pushed audits; hosted MCP requires a Pro or Enterprise workspace.
 
@@ -82,6 +82,7 @@ xerg mcp-setup
 ## Security And Data Flow
 
 - Local audits read OpenClaw, Hermes, Claude Code, Cursor usage, or ingest payload files and may write local JSON snapshots for `--compare`.
+- Hermes uses `~/.hermes/state.db` read-only by default. Optional observer telemetry and the complete mechanical-efficiency block remain local and are excluded from push payloads.
 - Remote OpenClaw audits pull selected files to local temporary storage before analysis.
 - Xerg Cloud sync only happens when you run `connect`, `audit --push`, or `push`.
 - Push payloads include audit totals, rollups, findings, recommendations, comparison deltas, and source metadata. They exclude raw prompt and response content, local source file paths, local snapshot store paths, and internal finding details.
@@ -98,6 +99,7 @@ xerg audit --json
 ## Links
 
 - Docs: [xerg.ai/docs](https://xerg.ai/docs)
+- Service status: [status.xerg.ai](https://status.xerg.ai)
 - Skill: [xerg.ai/skill.md](https://xerg.ai/skill.md)
 - npm: [@xerg/cli](https://www.npmjs.com/package/@xerg/cli)
 - Pricing: [xerg.ai/pricing](https://xerg.ai/pricing)

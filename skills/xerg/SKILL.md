@@ -8,6 +8,7 @@ metadata:
     links:
       skill: https://xerg.ai/skill.md
       documentation: https://xerg.ai/docs
+      status: https://status.xerg.ai
     primaryEnv: XERG_API_KEY
     requires:
       anyBins:
@@ -70,6 +71,7 @@ If no local data is found, `doctor` prints the paths it checked. Fallbacks:
 
 - Cursor usage CSV export: `npx @xerg/cli@latest audit --cursor-usage-csv ./cursor-usage.csv`
 - Claude Code transcripts elsewhere: `--claude-code-dir <path>`
+- Hermes profile database: `--runtime hermes --state-db <path>`
 - Any framework's exported event payload: `npx @xerg/cli@latest ingest --file payload.json`
 - Remote OpenClaw over SSH: `npx @xerg/cli@latest audit --remote user@host`
 - Railway-hosted OpenClaw: `npx @xerg/cli@latest audit --railway`
@@ -79,7 +81,7 @@ If `xerg` is installed globally, use `xerg` in place of `npx @xerg/cli@latest`.
 ## What It Audits
 
 - OpenClaw gateway logs and session transcripts
-- Hermes logs and session transcripts
+- Hermes v0.17+ `state.db` (read-only), with legacy log/transcript fallback where present
 - Claude Code session transcripts via `xerg audit --runtime claude-code`
 - Cursor usage CSV exports via `xerg audit --cursor-usage-csv ./cursor-usage.csv`
 - Any framework's exported event payload via `xerg ingest --file payload.json`
@@ -94,8 +96,11 @@ If `xerg` is installed globally, use `xerg` in place of `npx @xerg/cli@latest`.
 - Idle spend from fixed-cadence scheduled loops
 - Per-agent spend attribution, including delegated sub-agent spend for Claude Code sidechains and ingest payloads
 - Cost per outcome when runs carry outcome signals; declare outcomes with `xerg outcome --workflow <name> --status success|failure`
+- Separate local Hermes mechanical metrics when the optional observer is enabled; these have no dollar classification, recommendation impact, or CI-gate effect
 
 Costs are priced across input, output, cache read, and cache write tokens using a catalog covering hundreds of current models. Run `xerg doctor --verbose` to see per-file extraction coverage (which economic signals the parser found).
+
+For current Hermes, use `xerg audit --runtime hermes`; Xerg prefers `~/.hermes/state.db`. Use `--state-db` for another profile. `--state-db` is mutually exclusive with legacy `--log-file` and `--sessions-dir`. The optional `xergai/hermes-observer` plugin writes content-free local events under `~/.hermes/xerg/events/`; it never adds economic calls or sends data to Xerg Cloud.
 
 ## Optional Cloud
 
@@ -104,6 +109,7 @@ Local audits need no account. Hosted sync and hosted MCP are optional workspace 
 ## Links
 
 - Docs: [xerg.ai/docs](https://xerg.ai/docs)
+- Service status: [status.xerg.ai](https://status.xerg.ai)
 - Skill: [xerg.ai/skill.md](https://xerg.ai/skill.md)
 - npm: [@xerg/cli](https://www.npmjs.com/package/@xerg/cli)
 - Support: `query@xerg.ai`
