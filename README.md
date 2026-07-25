@@ -2,13 +2,21 @@
 
 Find wasted AI spend in OpenClaw, Hermes, Claude Code, Cursor, and any framework that can export a JSON event payload.
 
-Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw logs/transcripts or an independent sanitized trace capture, Hermes v0.17+ `state.db`, Claude Code transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates confirmed waste from savings opportunities, and lets you measure fixes with `--compare`.
+Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw logs/transcripts or an independent sanitized trace capture, Hermes v0.17+ `state.db` with optional observer/certified trace enrichment, Claude Code transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates confirmed waste from savings opportunities, and lets you measure fixes with `--compare`.
 
 Everything runs locally by default. The CLI is publicly installable from npm as `@xerg/cli`, but it is not open source. No account is required for local audits. A free hosted workspace keeps the last 30 days of pushed audits; hosted MCP requires a Pro or Enterprise workspace.
 
 The `npx @xerg/cli@latest` path fetches and executes the published npm package before running Xerg. If you want to avoid that fetch on each use, install the CLI globally with `npm install -g @xerg/cli`.
 
 ## Install
+
+Give a terminal-capable agent the universal cold-fetch prompt:
+
+```text
+set up https://xerg.ai/skill.md
+```
+
+The agent must ask before persistent installation, runs `doctor`, and offers a local audit before any upload.
 
 Install this skill into any agent that supports the Agent Skills standard (Claude Code, Codex, Cursor, and others):
 
@@ -56,6 +64,7 @@ xerg doctor
 xerg audit --json
 xerg audit --json --compare
 xerg collect openclaw
+xerg collect hermes --state-db ~/.hermes/state.db
 xerg audit --otlp-file ./openclaw.capture.jsonl
 ```
 
@@ -65,6 +74,7 @@ Add `--runtime openclaw`, `--runtime hermes`, or `--runtime claude-code` when mo
 
 - Local machine: OpenClaw, Hermes, and Claude Code (`xerg audit --runtime claude-code`)
 - Independent local OpenClaw traces: `xerg collect openclaw` or `xerg audit --otlp-file <capture.jsonl>`
+- Certified local Hermes trace enrichment: `xerg collect hermes --state-db <path>` or `xerg audit --runtime hermes --state-db <path> --otlp-file <capture.jsonl>`
 - Local Cursor usage export: `xerg audit --cursor-usage-csv ./cursor-usage.csv`
 - Any framework's exported event payload: `xerg ingest --file payload.json`
 - Remote OpenClaw sources via SSH or configured remote transports
@@ -85,8 +95,8 @@ xerg mcp-setup
 ## Security And Data Flow
 
 - Local audits read OpenClaw, Hermes, Claude Code, Cursor usage, or ingest payload files and may write local JSON snapshots for `--compare`.
-- Hermes uses `~/.hermes/state.db` read-only by default. Optional observer telemetry and the complete mechanical-efficiency block remain local and are excluded from push payloads.
-- OpenClaw trace collection binds only to loopback, sanitizes before persistence, receives traces only, never merges with transcripts, and never pushes automatically. `toolActivity` and `workloadEconomics` remain local.
+- Hermes uses `~/.hermes/state.db` read-only by default and as its sole monetary authority. Optional observer telemetry and certified trace enrichment preserve authoritative token buckets and audit identity; analysis coverage and the complete mechanical-efficiency block remain local and are excluded from push payloads.
+- Both trace collectors bind only to loopback, sanitize before persistence, receive traces only, and never push automatically. `analysisCoverage`, `toolActivity`, and `workloadEconomics` remain local.
 - Remote OpenClaw audits pull selected files to local temporary storage before analysis.
 - Xerg Cloud sync only happens when you run `connect`, `audit --push`, or `push`.
 - Push payloads include audit totals, rollups, findings, recommendations, comparison deltas, and source metadata. They exclude raw prompt and response content, local source file paths, local snapshot store paths, and internal finding details.

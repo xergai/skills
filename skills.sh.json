@@ -1,0 +1,11 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Agent spend",
+      "description": "Audit and reduce AI agent spend in dollars.",
+      "skills": ["xerg"]
+    }
+  ]
+}
