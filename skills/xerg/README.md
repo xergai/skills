@@ -1,6 +1,6 @@
 # Xerg
 
-Find wasted AI spend in OpenClaw, Hermes, Claude Code, Cursor, and any framework that can export a JSON event payload.
+Find wasted AI spend in OpenClaw, Hermes, Claude Code, Cursor, and any framework that can export a JSON event payload. Audit provider-generated FOCUS 1.4 billing data locally.
 
 Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw logs/transcripts or an independent sanitized trace capture, Hermes v0.17+ `state.db` with optional observer/certified trace enrichment, Claude Code transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates confirmed waste from savings opportunities, and lets you measure fixes with `--compare`.
 
@@ -78,6 +78,7 @@ Add `--runtime openclaw`, `--runtime hermes`, or `--runtime claude-code` when mo
 - Local Cursor usage export: `xerg audit --cursor-usage-csv ./cursor-usage.csv`
 - Any framework's exported event payload: `xerg ingest --file payload.json`
 - Remote OpenClaw sources via SSH or configured remote transports
+- Provider-generated FOCUS 1.4 CSV or Parquet: `xerg focus init --input <directory>` then `xerg focus audit --bundle <manifest.json>`
 
 If local defaults are empty, inspect the target directly first with `xerg doctor --remote user@host`.
 
@@ -101,6 +102,7 @@ xerg mcp-setup
 - Xerg Cloud sync only happens when you run `connect`, `audit --push`, or `push`.
 - Push payloads include audit totals, rollups, findings, recommendations, comparison deltas, and source metadata. They exclude raw prompt and response content, local source file paths, local snapshot store paths, and internal finding details.
 - Rollup-level provenance (per-finding `signalSource`, waste-by-signal-source totals, and pricing coverage counts) is carried on the wire; evidence references and internal details stay local.
+- FOCUS raw files and rows remain local. Its explicit USD-only push contains bounded aggregate totals and excludes paths, customer/invoice/contract IDs, descriptions, tags, metadata URLs, SKU/model labels, and custom values.
 
 ## CI And Automation
 
