@@ -2,7 +2,7 @@
 
 Find wasted AI spend in OpenClaw, Hermes, Claude Code, Cursor, and any framework that can export a JSON event payload. Audit provider-generated FOCUS 1.4 billing data locally.
 
-Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw logs/transcripts or an independent sanitized trace capture, Hermes v0.17+ `state.db` with optional observer/certified trace enrichment, Claude Code transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates confirmed waste from savings opportunities, and lets you measure fixes with `--compare`.
+Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw logs/transcripts or an independent sanitized trace capture, Hermes v0.17+ `state.db` with optional observer/certified trace enrichment, Claude Code transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates identified waste from savings opportunities, reports what detector spend was assessed, and lets you measure compatible fixes with `--compare`.
 
 Everything runs locally by default. The CLI is publicly installable from npm as `@xerg/cli`, but it is not open source. No account is required for local audits. A free hosted workspace keeps the last 30 days of pushed audits; hosted MCP requires a Pro or Enterprise workspace.
 
@@ -46,7 +46,7 @@ npx @xerg/cli@latest init
 - **Downgrade candidates** - expensive models on operationally simple tasks
 - **Idle waste** - recurring heartbeat or monitoring loops worth reviewing
 
-Local JSON findings can include `signalSource`, `ruleId`, and evidence references so agents can distinguish observed signals from inferred or legacy unknown provenance. Compare output leads with normalized waste rate and per-unit rows before workload-dependent spend deltas.
+Local JSON findings can include `signalSource`, `ruleId`, and evidence references so agents can distinguish observed signals from inferred or legacy unknown provenance. Compare output leads with normalized identified-waste rate and per-unit rows only when detector coverage is compatible, before workload-dependent spend deltas.
 
 ## Quick Start
 
@@ -96,7 +96,7 @@ xerg mcp-setup
 ## Security And Data Flow
 
 - Local audits read OpenClaw, Hermes, Claude Code, Cursor usage, or ingest payload files and may write local JSON snapshots for `--compare`.
-- Hermes uses `~/.hermes/state.db` read-only by default and as its sole monetary authority. Optional observer telemetry and certified trace enrichment preserve authoritative token buckets and audit identity; analysis coverage and the complete mechanical-efficiency block remain local and are excluded from push payloads.
+- Hermes uses `~/.hermes/state.db` read-only by default and as its sole monetary authority. Optional observer telemetry and certified trace enrichment preserve authoritative token buckets and `economicAuditId`; analysis `auditId` changes when coverage/findings change. Push v5 includes only content-free detector eligibility and source stability; detailed mechanics remain local.
 - Both trace collectors bind only to loopback, sanitize before persistence, receive traces only, and never push automatically. `analysisCoverage`, `toolActivity`, and `workloadEconomics` remain local.
 - Remote OpenClaw audits pull selected files to local temporary storage before analysis.
 - Xerg Cloud sync only happens when you run `connect`, `audit --push`, or `push`.

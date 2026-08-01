@@ -46,7 +46,7 @@ metadata:
 
 # Xerg
 
-Xerg is a local-first CLI for finding wasted AI runtime spend and auditing provider-generated FOCUS 1.4 billing. Runtime audits separate confirmed waste from savings opportunities and use `--compare` to measure changes. FOCUS audits use a separate billing pipeline for effective cost, commitments, invoice reconciliation, and billing-period coverage.
+Xerg is a local-first CLI for finding wasted AI runtime spend and auditing provider-generated FOCUS 1.4 billing. Runtime audits separate identified waste from savings opportunities, report detector coverage, and use `--compare` to measure compatible changes. FOCUS audits use a separate billing pipeline for effective cost, commitments, invoice reconciliation, and billing-period coverage.
 
 ## Cold-fetch setup
 
@@ -79,7 +79,7 @@ npx @xerg/cli@latest audit --json
 
 1. Run `doctor` first. It reports which local sources exist (OpenClaw, Hermes, Claude Code) and which default paths were checked.
 2. Run `audit --json`. If more than one runtime is detected, add `--runtime openclaw`, `--runtime hermes`, or `--runtime claude-code`.
-3. Summarize the result for the user in dollars: total spend, confirmed waste (`wasteSpendUsd`), the top findings, and the per-agent spend breakdown (`spendByAgent`) when present. Confirmed waste and savings opportunities are different claims — do not present opportunities as proven waste.
+3. Summarize the result for the user in dollars: total spend, identified waste (`wasteSpendUsd`), assessed spend from `detectionCoverage`, the top findings, and the per-agent spend breakdown (`spendByAgent`) when present. Identified waste and savings opportunities are different claims — do not present opportunities as proven waste. Never describe `$0` as no waste when request-sequence coverage is none, partial, or unknown.
 4. If the user applies a fix, re-run the same audit with `--compare` to report the before/after delta:
 
 ```bash
@@ -137,11 +137,13 @@ For CI, add `--strict --no-db`. Strict validation errors exit `4`. FOCUS source 
 
 Costs are priced across input, output, cache read, and cache write tokens using a catalog covering hundreds of current models. Run `xerg doctor --verbose` to see per-file extraction coverage (which economic signals the parser found).
 
-For current Hermes, use `xerg audit --runtime hermes`; Xerg prefers `~/.hermes/state.db`. Use `--state-db` for another profile. `--state-db` is mutually exclusive with legacy `--log-file` and `--sessions-dir`. The optional `xergai/hermes-observer` plugin writes content-free local events under `~/.hermes/xerg/events/`; it never adds economics or sends data to Xerg Cloud. Complete observer evidence can split an aggregate only after exact request/token reconciliation.
+For current Hermes, use `xerg audit --runtime hermes`; Xerg prefers `~/.hermes/state.db`. Use `--state-db` for another profile. `--state-db` is mutually exclusive with legacy `--log-file` and `--sessions-dir`. State-only audits retain aggregate spend, request/token/cache, workflow/model/tool, and delegated-workload totals, but first-request cost, initial context, request growth, retry sequences, and identical-input loops are unavailable. The optional `xergai/hermes-observer` plugin writes content-free local events under `~/.hermes/xerg/events/`; it never adds economics or sends content to Xerg Cloud. Complete observer evidence can split an aggregate only after exact request/token reconciliation.
+
+After installing the observer, restart Hermes, start a new session, and run `xerg doctor --runtime hermes`. Report doctor status and assessed spend. Do not imply that historical aggregate sessions can be reconstructed. Use `--require-detection-coverage full|partial` for CI; unmet coverage exits `5`.
 
 For OpenClaw traces, `xerg collect openclaw` binds only to `127.0.0.1`, accepts OTLP/HTTP protobuf traces, persists a bounded sanitized capture, and audits after shutdown. It does not modify OpenClaw configuration or push automatically. Without explicit `--runtime hermes`, `--otlp-file` is independent OpenClaw evidence and cannot be combined with transcript, log, other-runtime, or remote sources.
 
-For certified Hermes traces, `xerg collect hermes` uses the same loopback traces-only protocol but HMACs identifiers with a persistent local key and requires `state.db`. Use only the exact certified `briancaffey/hermes-otel` commit printed in Xerg's docs. Xerg never installs or edits that plugin. The first-party observer stays primary; cache-inclusive plugin prompt totals are normalized into Xerg's separate input/cache buckets, optional enrichment preserves audit identity, and conflicting evidence restores the original aggregate. For non-default `HERMES_HOME` profiles, use the equivalent environment-variable block printed by the command because the pinned plugin resolves YAML under `~/.hermes`.
+For certified Hermes traces, `xerg collect hermes` uses the same loopback traces-only protocol but HMACs identifiers with a persistent local key and requires `state.db`. Use only the exact certified `briancaffey/hermes-otel` commit printed in Xerg's docs. Xerg never installs or edits that plugin. The first-party observer stays primary; cache-inclusive plugin prompt totals are normalized into Xerg's separate input/cache buckets, optional enrichment preserves `economicAuditId` while analysis identity reflects changed coverage, and conflicting evidence restores the original aggregate. For non-default `HERMES_HOME` profiles, use the equivalent environment-variable block printed by the command because the pinned plugin resolves YAML under `~/.hermes`.
 
 ## Optional Cloud
 
