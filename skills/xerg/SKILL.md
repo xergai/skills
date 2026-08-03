@@ -1,6 +1,6 @@
 ---
 name: xerg
-description: Audit and reduce AI agent spend in dollars, or audit provider-generated FOCUS 1.4 billing data. Use for AI costs, agent spend, token waste, billing reconciliation, commitments, or FinOps. Works with OpenClaw, Hermes, Claude Code, Cursor, generic event ingest, and FOCUS CSV/Parquet.
+description: Audit and reduce AI agent runtime spend in dollars. Use for AI costs, agent spend, token waste, runtime attribution, detector coverage, and FinOps. Works with OpenClaw, Hermes, Claude Code, Cursor, and generic event ingest.
 homepage: https://xerg.ai
 metadata:
   xerg:
@@ -46,7 +46,7 @@ metadata:
 
 # Xerg
 
-Xerg is a local-first CLI for finding wasted AI runtime spend and auditing provider-generated FOCUS 1.4 billing. Runtime audits separate identified waste from savings opportunities, report detector coverage, and use `--compare` to measure compatible changes. FOCUS audits use a separate billing pipeline for effective cost, commitments, invoice reconciliation, and billing-period coverage.
+Xerg is a local-first CLI for finding wasted AI runtime spend. Runtime audits separate identified waste from savings opportunities, report detector coverage, and use `--compare` to measure compatible changes. Runtime costs may be observed, locally estimated, or unpriced; they are not authoritative provider invoices.
 
 ## Cold-fetch setup
 
@@ -108,19 +108,8 @@ If `xerg` is installed globally, use `xerg` in place of `npx @xerg/cli@latest`.
 - Claude Code session transcripts via `xerg audit --runtime claude-code`
 - Cursor usage CSV exports via `xerg audit --cursor-usage-csv ./cursor-usage.csv`
 - Any framework's exported event payload via `xerg ingest --file payload.json`
-- FOCUS 1.4 Cost and Usage, Contract Commitment, Invoice Detail, and Billing Period datasets in local CSV or Parquet
 
-## FOCUS billing execution path
-
-Use this path when the user supplies a directory of provider-generated FOCUS data:
-
-```bash
-npx @xerg/cli@latest focus init --input ./provider-focus-export
-npx @xerg/cli@latest focus doctor --bundle ./provider-focus-export/xerg-focus.json
-npx @xerg/cli@latest focus audit --bundle ./provider-focus-export/xerg-focus.json --json
-```
-
-For CI, add `--strict --no-db`. Strict validation errors exit `4`. FOCUS source data remains local. Never push automatically; if the user explicitly asks to push, first show the exact USD-only bounded aggregate with `--push --dry-run`. The push omits rows, paths, customer/invoice/contract identifiers, descriptions, tags, metadata URLs, SKU/model labels, and custom values. Runtime and FOCUS audits are separate and must never be added together or compared across audit kinds.
+Xerg does not currently ingest provider bills, reconcile invoices, or convert runtime observations into FOCUS. If a user asks for one of those capabilities, explain the boundary and do not present modeled runtime spend as invoice-authoritative.
 
 ## What It Finds
 
