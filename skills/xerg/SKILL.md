@@ -50,7 +50,7 @@ metadata:
 
 # Xerg
 
-Xerg is a local-first CLI for finding wasted AI runtime spend. Runtime audits separate identified waste from savings opportunities, report detector coverage, and use `--compare` to measure compatible changes. Runtime costs may be observed, locally estimated, or unpriced; they are not authoritative provider invoices.
+Xerg is a local-first CLI for finding wasted AI runtime spend. Runtime audits separate three evidence-strict monetary findings from seven neutral signals, report detector coverage, and use `--compare` to measure compatible changes. Runtime costs may be observed, locally estimated, or unpriced; they are not authoritative provider invoices.
 
 ## Cold-fetch setup
 
@@ -87,7 +87,7 @@ npx @xerg/cli@latest audit --json
 
 1. Run `doctor` first. It reports which local sources exist (OpenClaw, Hermes, Claude Code) and which default paths were checked. QM is never auto-probed.
 2. Run `audit --json`. If more than one runtime is detected, add `--runtime openclaw`, `--runtime hermes`, or `--runtime claude-code`.
-3. Summarize the result for the user in dollars: total spend, identified waste (`wasteSpendUsd`), assessed spend from `detectionCoverage`, the top findings, and the per-agent spend breakdown (`spendByAgent`) when present. Identified waste and savings opportunities are different claims — do not present opportunities as proven waste. Never describe `$0` as no waste when request-sequence coverage is none, partial, or unknown.
+3. Summarize the result for the user in dollars: total spend, identified waste (`wasteSpendUsd`), assessed spend from `detectionCoverage`, active findings, neutral signals, and the per-agent spend breakdown (`spendByAgent`) when present. Never monetize a signal or describe `$0` as no waste when active-finding coverage is none, partial, unsupported, or unknown.
 4. If the user applies a fix, re-run the same audit with `--compare` to report the before/after delta:
 
 ```bash
@@ -124,12 +124,10 @@ Xerg does not currently ingest provider bills, reconcile invoices, or convert ru
 
 ## What It Finds
 
-- Retry waste from failed calls before a later success (explicit or transcript-inferred on session sources)
-- Loop waste from runs that exceed efficient iteration bounds, and repeated identical tool sequences
-- Context bloat from unusually large inputs, and per-session context growth that compaction would cut
-- Cache-write churn where prompt-cache premiums are paid without reuse
-- Downgrade candidates where cheaper models may be enough
-- Idle spend from fixed-cadence scheduled loops
+- Retry waste only from a stable charged failed/aborted attempt chain that ends in a higher successful attempt
+- Tool-loop waste only from exact repeated tool name/input/result/state evidence with no progress and exact cost correlation
+- Cache churn only when a cache-entry lifecycle costs more than its uncached counterfactual
+- Neutral signals for deep loops, context outliers/growth, fixed cadence, premium-model routine labels, cache-read concentration, and Max Mode concentration; ordered metrics and optional associated spend remain descriptive, and signals have no avoidable-spend, recommendation, optimization, or CI effect
 - Per-agent spend attribution, including delegated sub-agent spend for Claude Code sidechains and ingest payloads
 - Cost per outcome when runs carry outcome signals; declare outcomes with `xerg outcome --workflow <name> --status success|failure`
 - Separate local Hermes mechanical metrics when the optional observer is enabled; these have no dollar classification, recommendation impact, or CI-gate effect
@@ -148,9 +146,9 @@ For certified Hermes traces, `xerg collect hermes` uses the same loopback traces
 
 ## QM private-scope procedure
 
-QM 0.19.0 uses a host-independent snapshot adapter. An operator outside Slack creates `qm-snapshot/v1` through either a strict view-only direct reader or the Fly-contained one-shot exporter. Fly contained mode uses QM core's existing `DATABASE_URL` only inside the hidden exporter, records a process boundary with no database-level least-privilege claim, and never exposes that credential to this skill. Do not mutate setup, install/persist the skill, activate, or push without explicit approval.
+QM currently supports bounded one-shot collection through a host-independent snapshot adapter. An operator outside Slack creates `qm-snapshot/v1` through either a strict view-only direct reader or the Fly-contained one-shot exporter. Fly contained mode uses QM core's existing `DATABASE_URL` only inside the hidden exporter, records a process boundary with no database-level least-privilege claim, and never exposes that credential to this skill. Do not mutate setup, install/persist the skill, activate, or push without explicit approval.
 
-In a QM Slack scope, never initiate live database or Fly collection. Accept only an authorized sanitized snapshot already made available in an administrator-only private scope, and use only the exact CLI the operator has explicitly provisioned and version-verified inside that runtime. Current Fly Sprites do not apply the configured sandbox OCI image to persistent Sprites, so never assume an image pin installed the CLI. If it is absent, explain that prerequisite instead of installing it without explicit approval. A live capability bridge is deferred to 0.20.0. Never request or receive a DSN, identity key, Fly token, provider credential, or Xerg API key.
+In a QM Slack scope, never initiate live database or Fly collection. Accept only an authorized sanitized snapshot already made available in an administrator-only private scope, and use only the exact CLI the operator has explicitly provisioned and version-verified inside that runtime. Current Fly Sprites do not apply the configured sandbox OCI image to persistent Sprites, so never assume an image pin installed the CLI. If it is absent, explain that prerequisite instead of installing it without explicit approval. Continuous follow capture, durable tool-history capture beyond QM's retention window, and live Slack-triggered collection are not currently supported. Never request or receive a DSN, identity key, Fly token, provider credential, or Xerg API key.
 
 Run doctor before every first audit:
 

@@ -2,7 +2,7 @@
 
 Find wasted AI spend in OpenClaw, Hermes, QM, Claude Code, Cursor, and any framework that can export a JSON event payload.
 
-Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw logs/transcripts or an independent sanitized trace capture, Hermes v0.17+ `state.db` with optional observer/certified trace enrichment, Claude Code transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates identified waste from savings opportunities, reports what detector spend was assessed, and lets you measure compatible fixes with `--compare`.
+Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw logs/transcripts or an independent sanitized trace capture, Hermes v0.17+ `state.db` with optional observer/certified trace enrichment, QM snapshots, Claude Code transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates three evidence-strict monetary findings from seven neutral signals, reports what each detector assessed, and lets you measure compatible fixes with `--compare`.
 
 Everything runs locally by default. The CLI is publicly installable from npm as `@xerg/cli`, but it is not open source. No account is required for local audits. A free hosted workspace keeps the last 30 days of pushed audits; hosted MCP requires a Pro or Enterprise workspace.
 
@@ -40,13 +40,12 @@ npx @xerg/cli@latest init
 
 ## What It Finds
 
-- **Retry waste** - failed calls that burned spend before a later success
-- **Loop waste** - runs that exceeded efficient iteration bounds
-- **Context bloat** - input token volume far above the workflow baseline
-- **Downgrade candidates** - expensive models on operationally simple tasks
-- **Idle waste** - recurring heartbeat or monitoring loops worth reviewing
+- **Retry waste** from stable charged failed/aborted attempt chains ending in success
+- **Tool-loop waste** from exact no-progress tool input/result/state repetitions
+- **Cache churn** only when a cache lifecycle costs more than its uncached counterfactual
+- Seven separate neutral signals for deep loops, context outliers/growth, fixed cadence, premium-model routine labels, cache-read concentration, and Max Mode concentration
 
-Local JSON findings can include `signalSource`, `ruleId`, and evidence references so agents can distinguish observed signals from inferred or legacy unknown provenance. Compare output leads with normalized identified-waste rate and per-unit rows only when detector coverage is compatible, before workload-dependent spend deltas.
+Current JSON findings carry affected and avoidable spend, evidence and impact bases, and detector version. Signals carry bounded observed metrics plus optional associated spend and basis; associated spend is never classified as waste. Compare output reports monetary deltas only when active-finding coverage is compatible.
 
 ## Quick Start
 
@@ -98,13 +97,13 @@ xerg mcp-setup
 ## Security And Data Flow
 
 - Local audits read OpenClaw, Hermes, QM snapshots, Claude Code, Cursor usage, or ingest payload files and may write local JSON snapshots for `--compare`.
-- Hermes uses `~/.hermes/state.db` read-only by default and as its sole monetary authority. Optional observer telemetry and certified trace enrichment preserve authoritative token buckets and `economicAuditId`; analysis `auditId` changes when coverage/findings change. Push v5 includes only content-free detector eligibility and source stability; detailed mechanics remain local.
-- QM strict direct mode uses a dedicated export-view-only reader. Fly Managed Postgres instead uses a disclosed one-shot process boundary inside QM core and does not claim database least privilege. Both use a backed-up identity key and HMAC raw IDs before persistence; content fields are not exported, and `openrouter/auto` placeholders remain unpriced. In 0.19.0 a QM Slack agent can audit an authorized pre-created snapshot with an operator-provisioned exact CLI but cannot initiate live collection. Current Fly Sprites require that CLI to be explicitly installed and verified inside the private persistent Sprite because they do not apply the configured sandbox OCI image.
+- Hermes uses `~/.hermes/state.db` read-only by default and as its sole monetary authority. Optional observer telemetry and certified trace enrichment preserve authoritative token buckets and `economicAuditId`; analysis `auditId` changes when coverage/findings change. Push v6 includes content-free finding/signal coverage plus eligible evidence-strict results; detailed mechanics remain local.
+- QM currently supports one-shot snapshot, strict direct, and Fly-contained collection. Strict direct mode uses a dedicated export-view-only reader. Fly Managed Postgres instead uses a disclosed one-shot process boundary inside QM core and does not claim database least privilege. Both use a backed-up identity key and HMAC raw IDs before persistence; content fields are not exported, and `openrouter/auto` placeholders remain unpriced. A QM Slack agent can audit an authorized pre-created snapshot with an operator-provisioned exact CLI but cannot initiate live collection. Continuous follow capture, durable tool-history capture beyond QM's retention window, and live Slack-triggered collection are not currently supported. Current Fly Sprites require the CLI to be explicitly installed and verified inside the private persistent Sprite because they do not apply the configured sandbox OCI image.
 - Both trace collectors bind only to loopback, sanitize before persistence, receive traces only, and never push automatically. `analysisCoverage`, `toolActivity`, and `workloadEconomics` remain local.
 - Remote OpenClaw audits pull selected files to local temporary storage before analysis.
 - Xerg Cloud sync only happens when you run `connect`, `audit --push`, or `push`.
 - Push payloads include audit totals, rollups, findings, recommendations, comparison deltas, and source metadata. They exclude raw prompt and response content, local source file paths, local snapshot store paths, and internal finding details.
-- Rollup-level provenance (per-finding `signalSource`, waste-by-signal-source totals, and pricing coverage counts) is carried on the wire; evidence references and internal details stay local.
+- Push v6 carries separate content-free findings, signals, per-detector coverage, and pricing coverage. Evidence references and internal details stay local.
 - Runtime costs may be observed, locally estimated, or unpriced. They are not authoritative provider invoices; Xerg does not currently ingest provider bills, reconcile invoices, or convert runtime audits to FOCUS.
 
 ## CI And Automation
