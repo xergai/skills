@@ -47,6 +47,8 @@ npx @xerg/cli@latest init
 
 Current JSON findings carry affected and avoidable spend, evidence and impact bases, and detector version. Signals carry bounded observed metrics plus optional associated spend and basis; associated spend is never classified as waste. Compare output reports monetary deltas only when active-finding coverage is compatible.
 
+Claude Code streaming records are reconstructed before analysis. Repeated tool-name chains are reported as neutral argument-diversity evidence, with only SHA-256 input/result digests and byte counts retained locally. A high distinct-input ratio is consistent with fan-out, while a low ratio is a reason to inspect; neither creates avoidable spend. Use `xerg explain <item-id>` to inspect a saved finding, signal, or chain packet.
+
 ## Quick Start
 
 Interactive first run (humans):
@@ -59,7 +61,7 @@ xerg audit --compare
 Non-interactive path (agents, scripts, CI):
 
 ```bash
-xerg doctor
+npx --yes @xerg/cli@latest doctor --json
 xerg audit --json
 xerg audit --json --compare
 xerg collect openclaw
@@ -104,6 +106,7 @@ xerg mcp-setup
 - Xerg Cloud sync only happens when you run `connect`, `audit --push`, or `push`.
 - Push payloads include audit totals, rollups, findings, recommendations, comparison deltas, and source metadata. They exclude raw prompt and response content, local source file paths, local snapshot store paths, and internal finding details.
 - Push v6 carries separate content-free findings, signals, per-detector coverage, and pricing coverage. Evidence references and internal details stay local.
+- Local snapshots may contain versioned diagnostic packets with digests, byte counts, local paths, and inspection guidance. Raw or truncated tool arguments/results are never stored, and diagnostics, digests, paths, and per-TTL cache buckets never cross Push v6.
 - Runtime costs may be observed, locally estimated, or unpriced. They are not authoritative provider invoices; Xerg does not currently ingest provider bills, reconcile invoices, or convert runtime audits to FOCUS.
 
 ## CI And Automation

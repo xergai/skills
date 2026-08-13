@@ -60,12 +60,12 @@ When this file was fetched from `https://xerg.ai/skill.md` rather than loaded fr
 2. Check whether Xerg is already installed for this host. Before writing to a persistent or global skill directory, explain the destination and ask the user for permission.
 3. If the host has a supported skill installer, use it after permission. OpenClaw can install `xerg` from ClawHub. Agent Skills hosts can install the public `xergai/skills` repository. Hermes can use Xerg's well-known skill discovery. Deterministic host-specific commands live at [xerg.ai/agents](https://xerg.ai/agents).
 4. If persistent installation is unavailable or declined, use these fetched instructions for the current session. Do not invent an install location.
-5. Run `npx @xerg/cli@latest doctor`, use its output to choose the non-interactive audit command below, and offer to run the first audit locally. On QM, do not use bare doctor: follow the private-scope QM procedure below.
+5. Ask permission before any npm download or install, including the transient package fetch that `npx` may perform. Separately ask permission before reading/analyzing local runtime data. After both applicable approvals, run `npx --yes @xerg/cli@latest doctor --json`, parse its `canAudit` and `recommendedCommand`, and offer to execute that exact recommendation. On QM, do not use bare doctor: follow the private-scope QM procedure below.
 
 Always ask before uploading. A local audit needs no account and must not be pushed automatically. After a successful local result, offer to connect and push it with:
 
 ```bash
-npx @xerg/cli@latest activate --push-latest
+npx --yes @xerg/cli@latest activate --push-latest
 ```
 
 `activate` opens Xerg in the browser. The signed-in user explicitly approves the currently active workspace; the page shows its full organization ID, live plan, and API environment before any credential is issued. If the intended Clerk ID is already known, recommend `--organization-id org_...` so both the page and API reject another active workspace. The organization switcher preserves the pairing code. The workspace key is encrypted to the initiating CLI and stored with owner-only, environment-bound metadata; never ask the user to paste a key into chat or expose one in a command.
@@ -80,35 +80,39 @@ If the current host is QM, a cold `set up https://xerg.ai/skill.md` request can 
 
 Use the non-interactive commands. Do not run `xerg init` unless the user explicitly asks for guided interactive setup — it is TTY-only and prompts for input.
 
+Before running the command, ask the user for permission for any npm download/install and separately for permission to inspect local runtime data. A persistent skill write, a transient `npx` package fetch, and local analysis are distinct actions; do not infer approval for one from another.
+
 ```bash
-npx @xerg/cli@latest doctor
-npx @xerg/cli@latest audit --json
+npx --yes @xerg/cli@latest doctor --json
 ```
 
-1. Run `doctor` first. It reports which local sources exist (OpenClaw, Hermes, Claude Code) and which default paths were checked. QM is never auto-probed.
-2. Run `audit --json`. If more than one runtime is detected, add `--runtime openclaw`, `--runtime hermes`, or `--runtime claude-code`.
-3. Summarize the result for the user in dollars: total spend, identified waste (`wasteSpendUsd`), assessed spend from `detectionCoverage`, active findings, neutral signals, and the per-agent spend breakdown (`spendByAgent`) when present. Never monetize a signal or describe `$0` as no waste when active-finding coverage is none, partial, unsupported, or unknown.
-4. If the user applies a fix, re-run the same audit with `--compare` to report the before/after delta:
+1. Run doctor in JSON mode first. It returns the CLI version, runtime/product, `canAudit`, checked sources, runtime evidence, notes, pricing-catalog provenance, and a shell-safe `recommendedCommand`. QM is never auto-probed.
+2. When `canAudit` is true, execute the exact `recommendedCommand`; it already selects the detected runtime/path and requests audit JSON. Do not reconstruct the command from prose.
+3. If an old global CLI or stale snapshot emits a finding with `ruleId: tool_sequence_repetition_v1`, do not summarize or recommend from that amount. Rerun doctor and the audit through `npx --yes @xerg/cli@latest`, then use only the current result.
+4. Lead with pricing coverage whenever any calls/tokens are unpriced or limited-estimate. Then summarize in dollars: total known spend, identified waste (`wasteSpendUsd`), assessed spend from `detectionCoverage`, active findings, neutral signals, and `spendByAgent` when present. Never monetize a signal or describe `$0` as no waste when active-finding coverage is none, partial, unsupported, or unknown.
+5. Before recommending remediation for any monetary finding, pin the lookup to the audit JSON that produced it: run `npx --yes @xerg/cli@latest explain <finding-id> --audit <auditId>:<generatedAt> --db <dbPath> --json`, using the JSON's exact `auditId`, `generatedAt`, and `dbPath` values with shell-safe quoting. Never use a bare newest-snapshot lookup. If `dbPath` is absent because the audit used `--no-db`, inspect its inline evidence packet and explain that later lookup is unavailable. Verify the required observations, economic meaning, pricing coverage, limitations, and next step; do not recommend a fix from the summary row alone.
+6. Present repeated tool-chain and `deep-loop-activity` rows as neutral observations. A high distinct ratio is consistent with fan-out and argues against an identical-input loop, but does not prove success. A low ratio is a reason to inspect, not proof of waste or recoverability. Associated spend is not classified as waste.
+7. If the user applies a fix, re-run the same audit with `--compare` to report the before/after delta:
 
 ```bash
-npx @xerg/cli@latest audit --json --compare
+npx --yes @xerg/cli@latest audit --json --compare
 ```
 
 If no local data is found, `doctor` prints the paths it checked. Fallbacks:
 
-- Cursor usage CSV export: `npx @xerg/cli@latest audit --cursor-usage-csv ./cursor-usage.csv`
+- Cursor usage CSV export: `npx --yes @xerg/cli@latest audit --cursor-usage-csv ./cursor-usage.csv`
 - Claude Code transcripts elsewhere: `--claude-code-dir <path>`
 - Hermes profile database: `--runtime hermes --state-db <path>`
-- Any framework's exported event payload: `npx @xerg/cli@latest ingest --file payload.json`
-- Existing sanitized OpenClaw trace capture: `npx @xerg/cli@latest audit --otlp-file <capture.jsonl>`
-- New local OpenClaw trace capture: `npx @xerg/cli@latest collect openclaw` (interactive until `Ctrl-C`; use only when the user asks to collect a workload)
-- Certified local Hermes trace enrichment: `npx @xerg/cli@latest collect hermes --state-db <path>` (interactive until `Ctrl-C`; state.db remains required)
-- Remote OpenClaw over SSH: `npx @xerg/cli@latest audit --remote user@host`
-- Railway-hosted OpenClaw: `npx @xerg/cli@latest audit --railway`
-- Existing QM snapshot: `npx @xerg/cli@latest audit --runtime qm --qm-snapshot <snapshot.jsonl>`
+- Any framework's exported event payload: `npx --yes @xerg/cli@latest ingest --file payload.json`
+- Existing sanitized OpenClaw trace capture: `npx --yes @xerg/cli@latest audit --otlp-file <capture.jsonl>`
+- New local OpenClaw trace capture: `npx --yes @xerg/cli@latest collect openclaw` (interactive until `Ctrl-C`; use only when the user asks to collect a workload)
+- Certified local Hermes trace enrichment: `npx --yes @xerg/cli@latest collect hermes --state-db <path>` (interactive until `Ctrl-C`; state.db remains required)
+- Remote OpenClaw over SSH: `npx --yes @xerg/cli@latest audit --remote user@host`
+- Railway-hosted OpenClaw: `npx --yes @xerg/cli@latest audit --railway`
+- Existing QM snapshot: `npx --yes @xerg/cli@latest audit --runtime qm --qm-snapshot <snapshot.jsonl>`
 - Configured QM direct/Fly source: an operator collects outside Slack; follow the private-scope procedure below only for an authorized snapshot
 
-If `xerg` is installed globally, use `xerg` in place of `npx @xerg/cli@latest`.
+Use the `npx --yes @xerg/cli@latest` path for first-run and rerun analysis so an old global CLI cannot reintroduce the retired name-only detector. A user may choose a verified current global install for later manual work.
 
 ## What It Audits
 
@@ -128,13 +132,15 @@ Xerg does not currently ingest provider bills, reconcile invoices, or convert ru
 - Tool-loop waste only from exact repeated tool name/input/result/state evidence with no progress and exact cost correlation
 - Cache churn only when a cache-entry lifecycle costs more than its uncached counterfactual
 - Neutral signals for deep loops, context outliers/growth, fixed cadence, premium-model routine labels, cache-read concentration, and Max Mode concentration; ordered metrics and optional associated spend remain descriptive, and signals have no avoidable-spend, recommendation, optimization, or CI effect
+- Local digest-only evidence packets and `xerg explain` for findings, signals, and qualifying repeated tool chains; raw and truncated tool arguments/results are never retained
+- Claude Code streaming reconstruction and argument-aware chain diagnostics; Claude remains ineligible for monetary tool-loop findings because its transcript supplies no defensible state/progress fingerprint
 - Per-agent spend attribution, including delegated sub-agent spend for Claude Code sidechains and ingest payloads
 - Cost per outcome when runs carry outcome signals; declare outcomes with `xerg outcome --workflow <name> --status success|failure`
 - Separate local Hermes mechanical metrics when the optional observer is enabled; these have no dollar classification, recommendation impact, or CI-gate effect
 - Shared local `analysisCoverage`, `toolActivity`, and `workloadEconomics` blocks for OpenClaw and Hermes; these are neutral evidence and never affect findings, recommendations, waste totals, or CI gates
 - QM request-versus-aggregate reconciliation, pricing coverage, source stability, pseudonymous scope attribution, and current-window unassociated tool activity
 
-Costs are priced across input, output, cache read, and cache write tokens using a catalog covering hundreds of current models. Run `xerg doctor --verbose` to see per-file extraction coverage (which economic signals the parser found).
+Costs are priced across input, output, cache read, and cache write tokens using a reviewed local catalog covering hundreds of current models. Opus 5 includes separate five-minute and one-hour cache-write rates. If a transcript preserves only aggregate cache creation, Xerg uses the documented five-minute default, reports affected tokens, and discloses the possible additional one-hour-cache cost. Audits never fetch pricing from the network. Run `xerg doctor --verbose` to see per-file extraction coverage (which economic signals the parser found).
 
 For current Hermes, use `xerg audit --runtime hermes`; Xerg prefers `~/.hermes/state.db`. Use `--state-db` for another profile. `--state-db` is mutually exclusive with legacy `--log-file` and `--sessions-dir`. State-only audits retain aggregate spend, request/token/cache, workflow/model/tool, and delegated-workload totals, but first-request cost, initial context, request growth, retry sequences, and identical-input loops are unavailable. The optional `xergai/hermes-observer` plugin writes content-free local events under `~/.hermes/xerg/events/`; it never adds economics or sends content to Xerg Cloud. Complete observer evidence can split an aggregate only after exact request/token reconciliation.
 
@@ -176,10 +182,10 @@ Local snapshot audit is the default. Ask for explicit approval before `xerg acti
 Local audits need no account. To connect a workspace and push the latest local result, ask permission and run:
 
 ```bash
-npx @xerg/cli@latest activate --push-latest
+npx --yes @xerg/cli@latest activate --push-latest
 ```
 
-For a website-first user with no cached audit, `npx @xerg/cli@latest activate` securely connects, detects a supported local source, runs the audit, and pushes it. Hosted sync and hosted MCP remain optional and never run without explicit user action.
+For a website-first user with no cached audit, `npx --yes @xerg/cli@latest activate` securely connects, detects a supported local source, runs the audit, and pushes it. Hosted sync and hosted MCP remain optional and never run without explicit user action.
 
 ## Advanced authentication
 
