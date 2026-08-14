@@ -54,7 +54,7 @@ Xerg is a local-first CLI for finding wasted AI runtime spend. Runtime audits se
 
 ## Cold-fetch setup
 
-When this file was fetched from `https://xerg.ai/skill.md` rather than loaded from an installed skill:
+When this file was fetched from `https://xerg.ai/skill.md` (including via the link on the npm listing for `@xerg/cli`) rather than loaded from an installed skill:
 
 1. Identify the current agent host. OpenClaw, Hermes, QM, Claude Code, Cursor, and Codex are setup hosts; they are not automatically the data source being audited. QM can also be the audit source, but only through its explicit administrator-provisioned Xerg connection.
 2. Check whether Xerg is already installed for this host. Before writing to a persistent or global skill directory, explain the destination and ask the user for permission.
