@@ -73,6 +73,8 @@ xerg audit --otlp-file ./openclaw.capture.jsonl
 
 Add `--runtime openclaw`, `--runtime hermes`, or `--runtime claude-code` when more than one local runtime is detected. QM is never auto-detected and always uses `--runtime qm` after administrator setup.
 
+SSH and Railway comparison identity includes the normalized `--since` window. Equivalent values such as `024h` and `24h` share identity; a different window intentionally starts a separate comparison and hosted-dedup history.
+
 ## Sources
 
 - Local machine: OpenClaw, Hermes, and Claude Code (`xerg audit --runtime claude-code`)

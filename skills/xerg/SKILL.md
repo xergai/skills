@@ -114,6 +114,8 @@ If no local data is found, `doctor` prints the paths it checked. Fallbacks:
 
 Use the `npx --yes @xerg/cli@latest` path for first-run and rerun analysis so an old global CLI cannot reintroduce the retired name-only detector. A user may choose a verified current global install for later manual work.
 
+Remote comparison identity includes the normalized `--since` window. Treat `024h` and `24h` as equivalent, treat omitted `--since` as `all`, and never claim comparison or hosted dedup continuity across pre-0.22 and current SSH/Railway snapshots. The first upgraded remote push may consume one Free snapshot or receive the existing at-quota response.
+
 ## What It Audits
 
 - OpenClaw gateway logs and session transcripts
