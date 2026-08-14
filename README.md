@@ -4,7 +4,7 @@ Find wasted AI spend in OpenClaw, Hermes, QM, Claude Code, Cursor, and any frame
 
 Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw logs/transcripts or an independent sanitized trace capture, Hermes v0.17+ `state.db` with optional observer/certified trace enrichment, QM snapshots, Claude Code transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates three evidence-strict monetary findings from seven neutral signals, reports what each detector assessed, and lets you measure compatible fixes with `--compare`.
 
-Everything runs locally by default. The CLI is publicly installable from npm as `@xerg/cli`, but it is not open source. No account is required for local audits. A free hosted workspace keeps the last 30 days of pushed audits; hosted MCP requires a Pro or Enterprise workspace.
+Everything runs locally by default. The CLI is publicly installable from npm as `@xerg/cli`, but it is not open source. No account is required for local audits. A free hosted workspace keeps the last 30 days of pushed audits and groups related incremental snapshots into expandable series; hosted MCP requires a Pro or Enterprise workspace.
 
 The `npx @xerg/cli@latest` path fetches and executes the published npm package before running Xerg. If you want to avoid that fetch on each use, install the CLI globally with `npm install -g @xerg/cli`.
 
