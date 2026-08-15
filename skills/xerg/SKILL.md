@@ -30,6 +30,9 @@ metadata:
       - name: XERG_API_URL
         required: false
         description: Optional override for the Xerg API endpoint; defaults to https://api.xerg.ai.
+      - name: XERG_AGENT_HOST
+        required: false
+        description: Best-effort bounded host hint for an explicitly approved hosted pairing or push; not authentication.
     dependencies:
       - name: "@xerg/cli"
         type: npm
@@ -62,10 +65,10 @@ When this file was fetched from `https://xerg.ai/skill.md` (including via the li
 4. If persistent installation is unavailable or declined, use these fetched instructions for the current session. Do not invent an install location.
 5. Ask permission before any npm download or install, including the transient package fetch that `npx` may perform. Separately ask permission before reading/analyzing local runtime data. After both applicable approvals, run `npx --yes @xerg/cli@latest doctor --json`, parse its `canAudit` and `recommendedCommand`, and offer to execute that exact recommendation. On QM, do not use bare doctor: follow the private-scope QM procedure below.
 
-Always ask before uploading. A local audit needs no account and must not be pushed automatically. After a successful local result, offer to connect and push it with:
+Always ask before uploading. A local audit needs no account and must not be pushed automatically. On an approved hosted command only, set `XERG_AGENT_HOST` to the current execution host: `claude_code`, `cursor`, `hermes`, `codex`, `openclaw`, `qm`, or `other`. This is best-effort analytics metadata, not authentication or the audit source. After a successful local result, offer to connect and push it with the matching host hint on that same command, for example from Codex:
 
 ```bash
-npx --yes @xerg/cli@latest activate --push-latest
+XERG_AGENT_HOST=codex npx --yes @xerg/cli@latest activate --push-latest
 ```
 
 `activate` opens Xerg in the browser. The signed-in user explicitly approves the currently active workspace; the page shows its full organization ID, live plan, and API environment before any credential is issued. If the intended Clerk ID is already known, recommend `--organization-id org_...` so both the page and API reject another active workspace. The organization switcher preserves the pairing code. The workspace key is encrypted to the initiating CLI and stored with owner-only, environment-bound metadata; never ask the user to paste a key into chat or expose one in a command.
@@ -73,6 +76,8 @@ npx --yes @xerg/cli@latest activate --push-latest
 If approval covers pairing only, use `activate --connect-only --organization-id org_...`. It must stop after verified credential storage and must not be combined with a source or push flag. A later audit or push requires its own explicit approval.
 
 Codex is an execution host, not a native Xerg audit source. A Codex user audits whatever `doctor` finds: OpenClaw, Hermes, Claude Code, a Cursor export, or a generic ingest payload.
+
+Local commands remain telemetry-free and add no analytics call. Pairing creation and explicit push requests send a fixed, content-free execution-context envelope. Do not infer Codex from `CODEX_*`, process names, ancestry, or undocumented runtime state; use the explicit hint above only when this skill is running the user-approved hosted command.
 
 If the current host is QM, a cold `set up https://xerg.ai/skill.md` request can explain prerequisites but cannot claim it persisted an admin skill pack, created PostgreSQL privileges, or provisioned secrets. Require an administrator-only private scope. Refuse deployment-wide output in public/shared scopes. Never ask anyone to paste a DSN, identity key, Fly token, provider credential, or Xerg API key into Slack or chat.
 
@@ -183,8 +188,10 @@ Local snapshot audit is the default. Ask for explicit approval before `xerg acti
 
 Local audits need no account. To connect a workspace and push the latest local result, ask permission and run:
 
+After selecting the exact bounded value from the mapping above, put it on the same approved hosted command. Codex example:
+
 ```bash
-npx --yes @xerg/cli@latest activate --push-latest
+XERG_AGENT_HOST=codex npx --yes @xerg/cli@latest activate --push-latest
 ```
 
 For a website-first user with no cached audit, `npx --yes @xerg/cli@latest activate` securely connects, detects a supported local source, runs the audit, and pushes it. Hosted sync and hosted MCP remain optional and never run without explicit user action.
