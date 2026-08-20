@@ -65,10 +65,10 @@ When this file was fetched from `https://xerg.ai/skill.md` (including via the li
 4. If persistent installation is unavailable or declined, use these fetched instructions for the current session. Do not invent an install location.
 5. Ask permission before any npm download or install, including the transient package fetch that `npx` may perform. Separately ask permission before reading/analyzing local runtime data. After both applicable approvals, run `npx --yes @xerg/cli@latest doctor --json`, parse its `canAudit` and `recommendedCommand`, and offer to execute that exact recommendation. On QM, do not use bare doctor: follow the private-scope QM procedure below.
 
-Always ask before uploading. A local audit needs no account and must not be pushed automatically. On an approved hosted command only, set `XERG_AGENT_HOST` to the current execution host: `claude_code`, `cursor`, `hermes`, `codex`, `openclaw`, `qm`, or `other`. This is best-effort analytics metadata, not authentication or the audit source. After a successful local result, offer to connect and push it with the matching host hint on that same command, for example from Codex:
+Always ask before uploading. A local audit needs no account and must not be pushed automatically. On an approved hosted command only, set `XERG_SETUP_METHOD=skill` and set `XERG_AGENT_HOST` to the current execution host: `claude_code`, `cursor`, `hermes`, `codex`, `openclaw`, `qm`, or `other`. These are best-effort, content-free analytics metadata, not authentication or the audit source. If the user's setup prompt includes an Xerg organization ID, preserve it with `--organization-id` on activation. After a successful local result, offer to connect and push it with both markers on that same command, for example from Codex:
 
 ```bash
-XERG_AGENT_HOST=codex npx --yes @xerg/cli@latest activate --push-latest
+XERG_SETUP_METHOD=skill XERG_AGENT_HOST=codex npx --yes @xerg/cli@latest activate --push-latest
 ```
 
 `activate` opens Xerg in the browser. The signed-in user explicitly approves the currently active workspace; the page shows its full organization ID, live plan, and API environment before any credential is issued. If the intended Clerk ID is already known, recommend `--organization-id org_...` so both the page and API reject another active workspace. The organization switcher preserves the pairing code. The workspace key is encrypted to the initiating CLI and stored with owner-only, environment-bound metadata; never ask the user to paste a key into chat or expose one in a command.
@@ -213,4 +213,4 @@ Use `XERG_API_KEY` only for non-interactive CI or deployment automation. Store i
 - Service status: [status.xerg.ai](https://status.xerg.ai)
 - Skill: [xerg.ai/skill.md](https://xerg.ai/skill.md)
 - npm: [@xerg/cli](https://www.npmjs.com/package/@xerg/cli)
-- Support: `query@xerg.ai`
+- Support: `hello@xerg.ai`

@@ -129,7 +129,7 @@ xerg audit --json
 - Skill: [xerg.ai/skill.md](https://xerg.ai/skill.md)
 - npm: [@xerg/cli](https://www.npmjs.com/package/@xerg/cli)
 - Pricing: [xerg.ai/pricing](https://xerg.ai/pricing)
-- Support: `query@xerg.ai`
+- Support: `hello@xerg.ai`
 
 ## Ownership
 
