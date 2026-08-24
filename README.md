@@ -112,7 +112,7 @@ xerg mcp-setup
 - Remote OpenClaw audits pull selected files to local temporary storage before analysis.
 - Xerg Cloud sync only happens when you run `connect`, `audit --push`, or `push`.
 - Push payloads include audit totals, rollups, findings, recommendations, comparison deltas, and source metadata. They exclude raw prompt and response content, local source file paths, local snapshot store paths, and internal finding details.
-- Push v7 carries separate content-free findings, signals, per-detector coverage, and daily pricing coverage. Push v6 remains accepted and meters identically from daily known spend. Evidence references and internal details stay local.
+- Push v7 carries separate content-free findings, signals, per-detector coverage, and daily pricing coverage. Signals may include an optional human-readable workflow/run label; older v7/v6 payloads remain valid without it. Push v6 remains accepted and meters identically from daily known spend. Evidence references and internal details stay local.
 - Local snapshots may contain versioned diagnostic packets with digests, byte counts, local paths, and inspection guidance. Raw or truncated tool arguments/results are never stored, and diagnostics, digests, paths, and per-TTL cache buckets never cross Push v7.
 - Runtime costs may be observed, locally estimated, or unpriced. They are not authoritative provider invoices; Xerg does not currently ingest provider bills, reconcile invoices, or convert runtime audits to FOCUS.
 

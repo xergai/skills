@@ -141,7 +141,7 @@ Xerg does not currently ingest provider bills, reconcile invoices, or convert ru
 - Retry waste only from a stable charged failed/aborted attempt chain that ends in a higher successful attempt
 - Tool-loop waste only from exact repeated tool name/input/result/state evidence with no progress and exact cost correlation
 - Cache churn only when a cache-entry lifecycle costs more than its uncached counterfactual
-- Neutral signals for deep loops, context outliers/growth, fixed cadence, premium-model routine labels, cache-read concentration, and Max Mode concentration; ordered metrics and optional associated spend remain descriptive, and signals have no avoidable-spend, recommendation, optimization, or CI effect
+- Neutral signals for deep loops, context outliers/growth, fixed cadence, premium-model routine labels, cache-read concentration, and Max Mode concentration; ordered metrics, optional human-readable workflow/run labels, and optional associated spend remain descriptive, and signals have no avoidable-spend, recommendation, optimization, or CI effect
 - Local digest-only evidence packets and `xerg explain` for findings, signals, and qualifying repeated tool chains; raw and truncated tool arguments/results are never retained
 - Claude Code streaming reconstruction and argument-aware chain diagnostics; Claude remains ineligible for monetary tool-loop findings because its transcript supplies no defensible state/progress fingerprint
 - Per-agent spend attribution, including delegated sub-agent spend for Claude Code sidechains and ingest payloads
