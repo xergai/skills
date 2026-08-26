@@ -203,6 +203,8 @@ XERG_AGENT_HOST=codex npx --yes @xerg/cli@latest activate --push-latest
 
 For a website-first user with no cached audit, `npx --yes @xerg/cli@latest activate` securely connects, detects a supported local source, runs the audit, and pushes it. Hosted sync and hosted MCP remain optional and never run without explicit user action.
 
+After an approved push, the hosted Overview Economic ledger normalizes the latest entitled active audit per source into workspace spend, identified waste, outcome coverage, success rate, and known cost per successful run. Audit Detail and Compare show the same outcome economics, and every Signal presentation keeps suggested investigation guidance explicitly separate from savings estimates.
+
 ## Advanced authentication
 
 Use `xerg login --replace` only as a manual recovery path when browser pairing is unavailable. It opens Workspace Settings and masks the key pasted into the terminal. Never ask for or paste a workspace key in agent chat.
