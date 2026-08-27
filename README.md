@@ -98,7 +98,7 @@ xerg mcp-setup
 
 - `activate` offers browser approval and pushes the latest audit; add `--organization-id org_...` to require one exact Clerk workspace, or `--connect-only` to pair without auditing or pushing
 - `mcp-setup` prints or writes hosted MCP config for supported clients
-- after an approved push, Overview's Economic ledger normalizes the latest entitled active audit per source with outcome coverage; Audit Detail and Compare add outcome economics, while Signal guidance remains explicitly non-monetary
+- after an approved push, Overview leads with fleet economics, seven-day comparable-source KPIs, identified waste by current department, and Source Performance; Audit Detail and Compare retain outcome economics, while Signal guidance remains explicitly non-monetary
 - local audits and compare remain available if you skip hosted setup
 
 ## Security And Data Flow
