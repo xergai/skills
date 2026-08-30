@@ -98,7 +98,7 @@ xerg mcp-setup
 
 - `activate` offers browser approval and pushes the latest audit; add `--organization-id org_...` to require one exact Clerk workspace, or `--connect-only` to pair without auditing or pushing
 - `mcp-setup` prints or writes hosted MCP config for supported clients
-- after an approved push, Overview leads with fleet economics, seven-day comparable-source KPIs, identified waste by current department, and Source Performance; Audit Detail and Compare retain outcome economics, while Signal guidance remains explicitly non-monetary
+- after an approved push, Overview leads with strictly validated seven-day before/after savings when available, keeps current waste separate, and can group identified-waste rates by department or runtime posture; runtime posture remains Not set until a workspace admin assigns `vpc`, `on-prem`, `saas`, `local`, `hybrid`, or `air-gap`, and is never inferred from audit evidence. Audit Detail adds daily Performance and detector-attributed Workflow economics, while Compare retains outcome evidence and Signal guidance remains explicitly non-monetary
 - local audits and compare remain available if you skip hosted setup
 
 ## Security And Data Flow
@@ -113,7 +113,7 @@ xerg mcp-setup
 - Remote OpenClaw audits pull selected files to local temporary storage before analysis.
 - Xerg Cloud sync only happens when you run `connect`, `audit --push`, or `push`.
 - Push payloads include audit totals, rollups, findings, recommendations, comparison deltas, and source metadata. They exclude raw prompt and response content, local source file paths, local snapshot store paths, and internal finding details.
-- Push v7 carries separate content-free findings, signals, per-detector coverage, and daily pricing coverage. Signals may include an optional human-readable workflow/run label; older v7/v6 payloads remain valid without it. Push v6 remains accepted and meters identically from daily known spend. Evidence references and internal details stay local.
+- Push v7 carries separate content-free findings, signals, per-detector coverage, and daily pricing coverage. Signals may include an optional human-readable workflow/run label; current producers also add an optional requested audit interval, detector-attributed workflow waste, and detector-versioned comparison finding changes. Older v7/v6 payloads remain valid without those additive fields. Push v6 remains accepted and meters identically from daily known spend. Evidence references and internal details stay local.
 - Local snapshots may contain versioned diagnostic packets with digests, byte counts, local paths, and inspection guidance. Raw or truncated tool arguments/results are never stored, and diagnostics, digests, paths, and per-TTL cache buckets never cross Push v7.
 - Runtime costs may be observed, locally estimated, or unpriced. They are not authoritative provider invoices; Xerg does not currently ingest provider bills, reconcile invoices, or convert runtime audits to FOCUS.
 

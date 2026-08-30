@@ -203,7 +203,7 @@ XERG_AGENT_HOST=codex npx --yes @xerg/cli@latest activate --push-latest
 
 For a website-first user with no cached audit, `npx --yes @xerg/cli@latest activate` securely connects, detects a supported local source, runs the audit, and pushes it. Hosted sync and hosted MCP remain optional and never run without explicit user action.
 
-After an approved push, the hosted Overview leads with a fleet conclusion, seven-day comparable-source KPIs, identified waste grouped by each source's current department, and Source Performance. Department assignment is one current attribute per source and is available on Free and paid plans. Audit Detail and Compare retain outcome economics, and every Signal presentation keeps suggested investigation guidance explicitly separate from savings estimates.
+After an approved push, the hosted Overview leads with strictly validated seven-day before/after savings when available, keeps current waste separate, can group identified-waste rates by department or runtime posture, and retains Source Performance. Department and runtime-posture assignments are current attributes per source on Free and paid plans. Runtime posture remains Not set until a workspace admin assigns one of vpc, on-prem, saas, local, hybrid, or air-gap; Xerg never infers it from framework, host, collection environment, or audit evidence. Audit Detail adds daily Performance and detector-attributed Workflow economics; Compare retains outcome evidence, and every Signal presentation keeps suggested investigation guidance explicitly separate from savings estimates.
 
 ## Advanced authentication
 
