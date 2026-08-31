@@ -75,7 +75,7 @@ xerg audit --otlp-file ./openclaw.capture.jsonl
 
 Add `--runtime openclaw`, `--runtime hermes`, or `--runtime claude-code` when more than one local runtime is detected. QM is never auto-detected and always uses `--runtime qm` after administrator setup.
 
-SSH and Railway comparison identity includes the normalized `--since` window. Equivalent values such as `024h` and `24h` share identity; a different window intentionally starts a separate comparison and hosted-dedup history.
+SSH and Railway comparison identity includes the normalized `--since` window and, when mixed OpenClaw source authority is engaged, the source-authority version. Equivalent values such as `024h` and `24h` share identity; a different window intentionally starts a separate comparison and hosted-dedup history. The first corrected mixed remote `--compare` run after upgrading to 0.28.0 has no compatible pre-0.28 baseline; the next mixed run with the same target, paths, and window compares normally. Single-kind remote keys are unchanged.
 
 ## Sources
 
@@ -88,6 +88,10 @@ SSH and Railway comparison identity includes the normalized `--since` window. Eq
 - Remote OpenClaw sources via SSH or configured remote transports
 
 If local defaults are empty, inspect the target directly first with `xerg doctor --remote user@host`.
+
+When OpenClaw gateway logs and session transcripts both produce calls in the requested window, Xerg uses transcripts as the sole authority for totals and analysis and excludes gateway runs. This prevents additive accounting when the same activity is present in both formats. Transcripts preserve agent, lineage, and per-tool evidence, but can omit gateway-only activity; mixed reports therefore warn that activity and spend may be understated and findings may differ from a fully reconciled view. Gateway-only and transcript-only audits are unchanged. Use only `--log-file` or only `--sessions-dir` to select one local source kind explicitly.
+
+Monetary and detector-coverage gates evaluate only that selected transcript evidence. Passing a gate does not certify omitted gateway-only activity.
 
 ## Optional Hosted Follow-Up
 
