@@ -206,6 +206,8 @@ For a website-first user with no cached audit, `npx --yes @xerg/cli@latest activ
 
 After an approved push, the hosted Overview leads with strictly validated seven-day before/after savings when available, keeps current waste separate, can group identified-waste rates by department or runtime posture, and retains Source Performance. Department and runtime-posture assignments are current attributes per source on Free and paid plans. Runtime posture remains Not set until a workspace admin assigns one of vpc, on-prem, saas, local, hybrid, or air-gap; Xerg never infers it from framework, host, collection environment, or audit evidence. Audit Detail adds daily Performance and detector-attributed Workflow economics; Compare retains outcome evidence, and every Signal presentation keeps suggested investigation guidance explicitly separate from savings estimates.
 
+When a user supplies a hosted Optimization ID and has already authorized hosted MCP access, retrieve its current safe handoff with `xerg_get_optimization({ optimization_id })` before proposing a code change. Treat the handoff as scoped evidence and instructions, inspect the target repository independently, make no automatic policy change, and require a compare audit for validation. A qualified validation fact may be described as qualified savings; an unqualified fact must retain its reason, and a missing fact is only “Validation details unavailable.”
+
 ## Advanced authentication
 
 Use `xerg login --replace` only as a manual recovery path when browser pairing is unavailable. It opens Workspace Settings and masks the key pasted into the terminal. Never ask for or paste a workspace key in agent chat.
