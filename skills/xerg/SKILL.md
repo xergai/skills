@@ -208,6 +208,8 @@ After an approved push, the hosted Overview leads with strictly validated seven-
 
 When a user supplies a hosted Optimization ID and has already authorized hosted MCP access, retrieve its current safe handoff with `xerg_get_optimization({ optimization_id })` before proposing a code change. Treat the handoff as scoped evidence and instructions, inspect the target repository independently, make no automatic policy change, and require a compare audit for validation. A qualified validation fact may be described as qualified savings; an unqualified fact must retain its reason, and a missing fact is only “Validation details unavailable.”
 
+If a user asks to send an Optimization to Linear, use the hosted dashboard action only after a workspace admin has connected Linear and selected a team. Explain that Xerg creates one sanitized, one-way issue from the existing handoff; it does not send raw model or tool content, synchronize issue status, or change the Optimization lifecycle automatically. Do not claim an issue was created unless the dashboard returns its stored Linear link.
+
 ## Advanced authentication
 
 Use `xerg login --replace` only as a manual recovery path when browser pairing is unavailable. It opens Workspace Settings and masks the key pasted into the terminal. Never ask for or paste a workspace key in agent chat.
