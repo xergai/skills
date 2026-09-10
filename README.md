@@ -1,5 +1,11 @@
 # Xerg
 
+Reviewed CLI version: **0.32.2**.
+
+This already-published CLI pin is reviewed independently of the skill's release version. New skill or package releases do not authorize an automatic pin change.
+
+This skill uses the exact reviewed CLI version, including doctor-generated follow-up commands. Bare `xerg` examples below require an explicitly approved installation verified with `xerg --version` against that version. Stop on a mismatch; do not silently upgrade or substitute another version. The pin selects the top-level npm package, not its transitive dependencies or cryptographic integrity. Permission to install, inspect local data, access a remote source, or upload remains separate.
+
 Find wasted AI spend in OpenClaw, Hermes, QM, Claude Code, Cursor, and any framework that can export a JSON event payload.
 
 Xerg is a local-first CLI for auditing AI spend in dollars, not raw token counts. It reads OpenClaw logs/transcripts or an independent sanitized trace capture, Hermes v0.17-v0.20.1 `state.db` with optional observer/certified trace enrichment, QM snapshots, Claude Code transcripts, and Cursor usage exports — plus event payloads from any framework via `xerg ingest` — separates three evidence-strict monetary findings from seven neutral signals, reports what each detector assessed, and lets you measure compatible fixes with `--compare`.
@@ -8,7 +14,7 @@ Everything runs locally by default. The CLI is publicly installable from npm as 
 
 Hosted pricing uses Monthly Audited Agent Spend from known spend in explicitly pushed runtime audits: Free through $2,000 per UTC month, Team at $99 through $10,000, Growth at $299 through $50,000, Scale at $799 through $250,000, and custom Enterprise above $250,000. Team, Growth, and Scale have identical capabilities. Historical imports, duplicate-review spend, and unpriced usage do not count toward MAAS.
 
-The `npx @xerg/cli@latest` path fetches and executes the published npm package before running Xerg. If you want to avoid that fetch on each use, install the CLI globally with `npm install -g @xerg/cli`.
+The `npx @xerg/cli@0.32.2` path may fetch and executes the exact published npm package before running Xerg. After explicit approval, install it once with `npm install -g @xerg/cli@0.32.2` if you prefer a global installation.
 
 ## Install
 
@@ -31,13 +37,13 @@ Then ask your agent to audit your AI spend. The agent runs the CLI itself and ex
 Install the CLI directly:
 
 ```bash
-npm install -g @xerg/cli
+npm install -g @xerg/cli@0.32.2
 ```
 
 Or run without installing:
 
 ```bash
-npx @xerg/cli@latest init
+npx @xerg/cli@0.32.2 init
 ```
 
 ## What It Finds
@@ -60,10 +66,10 @@ xerg init
 xerg audit --compare
 ```
 
-Non-interactive path (agents, scripts, CI):
+Non-interactive path (agents, scripts, CI): after the applicable permissions, verify doctor's `cliVersion` and preserve the exact shell-safe audit arguments. The published CLI 0.32.2 can print a legacy mutable npx package prefix: apply only the literal leading-prefix correction specified in `SKILL.md` to keep execution at 0.32.2. Never execute that mutable recommendation unchanged, rewrite its argument suffix, or generalize the exception to other versions or command shapes. Stop on other mismatches. The subsequent examples require the verified installed CLI described above; they are not automatic follow-up actions.
 
 ```bash
-npx --yes @xerg/cli@latest doctor --json
+npx --yes @xerg/cli@0.32.2 doctor --json
 xerg audit --json
 xerg audit --json --compare
 xerg collect openclaw
