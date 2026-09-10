@@ -26,13 +26,15 @@ set up https://xerg.ai/skill.md
 
 The agent must ask before persistent installation, runs `doctor`, and offers a local audit before any upload.
 
-Install this skill into any agent that supports the Agent Skills standard (Claude Code, Codex, Cursor, and others):
+For Agent Skills hosts (Claude Code, Codex, Cursor, and others), first obtain and review a specific **40-character hexadecimal commit SHA** from the public `xergai/skills` repository. After approving the installer download and skill installation, replace the placeholder below with that reviewed SHA. Do not run the placeholder or substitute a branch, tag, or automatically selected latest revision. The pinned installer requires Node 22.20 or newer (separate from Xerg's Node 22.13 minimum).
 
 ```bash
-npx skills add xergai/skills
+npx --yes --package=skills@1.5.25 skills add 'https://github.com/xergai/skills/tree/<REVIEWED_PUBLIC_REPO_FULL_SHA>/skills/xerg' --skill xerg
 ```
 
-Then ask your agent to audit your AI spend. The agent runs the CLI itself and explains the findings.
+The command leaves agent selection and installation scope interactive; `npx --yes` only accepts the approved package download. The installer version and source revision are both explicit; this does not pin transitive dependencies or provide a cryptographic integrity guarantee. If no reviewed SHA is available, stop the installer step or import an already-reviewed local skill folder through your host's supported flow after permission. Current-session use of the fetched skill still requires its separate permissions and must not persist it implicitly. A CLI version pin does not establish that an older package's bundled skill is the corrected revision.
+
+Then ask your agent to audit your AI spend. Installation does not authorize local inspection, remote access, or upload; the agent asks separately and explains the findings.
 
 Install the CLI directly:
 
