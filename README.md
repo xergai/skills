@@ -1,6 +1,6 @@
 # Xerg
 
-Reviewed CLI version: **0.32.2**.
+Reviewed CLI version: **0.34.0**.
 
 This already-published CLI pin is reviewed independently of the skill's release version. New skill or package releases do not authorize an automatic pin change.
 
@@ -14,7 +14,7 @@ Everything runs locally by default. The CLI is publicly installable from npm as 
 
 Hosted pricing uses Monthly Audited Agent Spend from known spend in explicitly pushed runtime audits: Free through $2,000 per UTC month, Team at $99 through $10,000, Growth at $299 through $50,000, Scale at $799 through $250,000, and custom Enterprise above $250,000. Team, Growth, and Scale have identical capabilities. Historical imports, duplicate-review spend, and unpriced usage do not count toward MAAS.
 
-The `npx @xerg/cli@0.32.2` path may fetch and executes the exact published npm package before running Xerg. After explicit approval, install it once with `npm install -g @xerg/cli@0.32.2` if you prefer a global installation.
+The `npx @xerg/cli@0.34.0` path may fetch and execute the exact published npm package before running Xerg. After explicit approval, install it once with `npm install -g @xerg/cli@0.34.0` if you prefer a global installation.
 
 ## Install
 
@@ -24,7 +24,7 @@ Give a terminal-capable agent the universal cold-fetch prompt:
 set up https://xerg.ai/skill.md
 ```
 
-The agent must ask before persistent installation, runs `doctor`, and offers a local audit before any upload.
+The agent first reviews the fetched skill and summarizes the software it may install and the local sources it may inspect. Persistent skill installation, an npm download, local runtime inspection, workspace connection, payload preview, and upload are separate stages; each applicable stage requires its own approval.
 
 For Agent Skills hosts (Claude Code, Codex, Cursor, and others), first obtain and review a specific **40-character hexadecimal commit SHA** from the public `xergai/skills` repository. After approving the installer download and skill installation, replace the placeholder below with that reviewed SHA. Do not run the placeholder or substitute a branch, tag, or automatically selected latest revision. The pinned installer requires Node 22.20 or newer (separate from Xerg's Node 22.13 minimum).
 
@@ -39,13 +39,13 @@ Then ask your agent to audit your AI spend. Installation does not authorize loca
 Install the CLI directly:
 
 ```bash
-npm install -g @xerg/cli@0.32.2
+npm install -g @xerg/cli@0.34.0
 ```
 
 Or run without installing:
 
 ```bash
-npx @xerg/cli@0.32.2 init
+npx @xerg/cli@0.34.0 init
 ```
 
 ## What It Finds
@@ -68,14 +68,14 @@ xerg init
 xerg audit --compare
 ```
 
-Non-interactive path (agents, scripts, CI): after the applicable permissions, verify doctor's `cliVersion` and preserve the exact shell-safe audit arguments. The published CLI 0.32.2 can print a legacy mutable npx package prefix: apply only the literal leading-prefix correction specified in `SKILL.md` to keep execution at 0.32.2. Never execute that mutable recommendation unchanged, rewrite its argument suffix, or generalize the exception to other versions or command shapes. Stop on other mismatches. The subsequent examples require the verified installed CLI described above; they are not automatic follow-up actions.
+Non-interactive path (agents, scripts, CI): after the applicable permissions, verify that doctor's `cliVersion` is 0.34.0. Require its recommendation to select that exact version, preserve the complete shell-safe command, show it, and obtain audit approval before running it as printed. Stop on a version mismatch or mutable package reference. The subsequent examples require the verified installed CLI described above; they are not automatic follow-up actions.
 
 ```bash
-npx --yes @xerg/cli@0.32.2 doctor --json
+npx --yes @xerg/cli@0.34.0 doctor --json
 xerg audit --json
 xerg audit --json --compare
 xerg collect openclaw
-xerg collect hermes --state-db ~/.hermes/state.db
+xerg collect hermes --state-db "$HERMES_HOME/state.db"
 xerg doctor --runtime qm
 xerg audit --runtime qm --since 7d
 xerg audit --otlp-file ./openclaw.capture.jsonl
@@ -103,32 +103,42 @@ Monetary and detector-coverage gates evaluate only that selected transcript evid
 
 ## Optional Hosted Follow-Up
 
+For skill-directed operation, inspect and approve each hosted stage separately:
+
 ```bash
-xerg activate --push-latest
-xerg mcp-setup
+XERG_SETUP_METHOD=skill XERG_AGENT_HOST=<host> npx --yes @xerg/cli@0.34.0 push --dry-run
+XERG_SETUP_METHOD=skill XERG_AGENT_HOST=<host> npx --yes @xerg/cli@0.34.0 activate --connect-only
+XERG_SETUP_METHOD=skill XERG_AGENT_HOST=<host> npx --yes @xerg/cli@0.34.0 push
 ```
 
-- `activate` offers browser approval and pushes the latest audit; add `--organization-id org_...` to require one exact Clerk workspace, or `--connect-only` to pair without auditing or pushing
+The preview prints the intended payload and should be summarized locally rather than pasted into chat. Add `--organization-id <verified-org-id>` to the connection command only when that exact value is known. Use `push --file <path> --dry-run` and the same `--file` on upload for an explicitly selected prepared payload. Connection and upload require distinct approvals and must not be combined in skill-directed work. Human-operated CLI flows remain documented separately.
+
 - `mcp-setup` prints or writes hosted MCP config for supported clients
 - hosted Optimizations can copy a Fix with Xerg task; paid hosted MCP exposes `xerg_get_optimization({ optimization_id })` to retrieve the same content-free handoff without changing code or policy
 - paid workspace admins can connect Linear and create one sanitized, one-way issue per Optimization; the integration does not synchronize issue status or change the Optimization automatically
 - after an approved push, Overview leads with strictly validated seven-day before/after savings when available, keeps current waste separate, and can group identified-waste rates by department or runtime posture; runtime posture remains Not set until a workspace admin assigns `vpc`, `on-prem`, `saas`, `local`, `hybrid`, or `air-gap`, and is never inferred from audit evidence. Audit Detail adds daily Performance and detector-attributed Workflow economics, while Compare retains outcome evidence and Signal guidance remains explicitly non-monetary
 - local audits and compare remain available if you skip hosted setup
 
+## Restricted environments
+
+Use an already installed or prefetched `@xerg/cli@0.34.0` when runtime package downloads are prohibited. Before a disconnected local audit, set `XERG_NO_UPDATE_CHECK=1` or `CI=1`, provide a dedicated writable XDG data directory for snapshots, and mount only the explicitly approved source files or directories read-only. Keep Xerg authentication and remote-source configuration outside the environment unless the user separately approves the applicable hosted or remote operation. SSH, Railway, pairing, and upload are networked modes.
+
+The registry's `dist.integrity` value can verify registry transport and cache bytes for the exact package, but it is not independent publisher provenance and does not cover the package's transitive dependency graph. The pushed payload contract is published in the MIT-licensed `@xerg/schemas` package; use `push --dry-run` to inspect the exact intended payload locally before separately approving an upload.
+
 ## Security And Data Flow
 
 - Local audits read OpenClaw, Hermes, QM snapshots, Claude Code, Cursor usage, or ingest payload files and may write local JSON snapshots for `--compare`.
 - Local commands remain telemetry-free. Explicit hosted pairing and push requests carry only a fixed, content-free execution-context envelope; the canonical skill sets a bounded `XERG_AGENT_HOST` hint on the same approved hosted command.
-- Hermes uses `~/.hermes/state.db` read-only by default and as its sole monetary authority. Optional observer telemetry and certified trace enrichment preserve authoritative token buckets and `economicAuditId`; analysis `auditId` changes when coverage/findings change. Push v7 includes content-free finding/signal coverage, daily pricing-coverage counts, and eligible evidence-strict results; detailed mechanics remain local.
-- The 0.33.0 Hermes compatibility update is separate from this skill's reviewed CLI 0.32.2 execution pin. Its bounded live acceptance passed for the exact v0.20.1, v0.20.6, and v0.21.0 pins in [Hermes analysis](https://xerg.ai/docs/hermes-analysis), with partial lifecycle observation on the newer two pins and separately pinned OTLP acceptance. It can describe equivalent captured native starts as one logical request, with a local observed-start count and retry-inclusive latency, not per-provider-attempt detail. Missing native timing or conflicting evidence remains aggregate, including older captures. Usage absent from Hermes state accounting is absent from Xerg totals, not evidence of a zero provider charge. These newer capabilities do not authorize changing the reviewed CLI pin, running newer commands under 0.32.2, or upgrading automatically; the skill's commands and version checks remain unchanged.
-- Xerg 0.24.2 certifies Hermes state schemas 16-25. Its observer maintains a bounded per-process health sidecar outside the evidence ledger. Before new Xerg-directed Hermes activity, run `xerg doctor --runtime hermes --require-observer-live`; failed preflight exits `5`, and restarting covers only future activity. Existing aggregate audits remain available with their limitation before totals and conclusions.
+- Hermes uses `$HERMES_HOME/state.db` read-only by default and as its sole monetary authority. Optional observer telemetry and certified trace enrichment preserve authoritative token buckets and `economicAuditId`; analysis `auditId` changes when coverage/findings change. Push v7 includes content-free finding/signal coverage, daily pricing-coverage counts, and eligible evidence-strict results; detailed mechanics remain local.
+- The reviewed CLI 0.34.0 includes the Hermes compatibility work documented in [Hermes analysis](https://xerg.ai/docs/hermes-analysis). Bounded live acceptance covered the exact v0.20.1, v0.20.6, and v0.21.0 pins, with partial lifecycle observation on the newer two pins and separately pinned OTLP acceptance. It can describe equivalent captured native starts as one logical request, with a local observed-start count and retry-inclusive latency, not per-provider-attempt detail. Missing native timing or conflicting evidence remains aggregate, including older captures. Usage absent from Hermes state accounting is absent from Xerg totals, not evidence of a zero provider charge. Newer package notices do not authorize changing the reviewed CLI pin or upgrading automatically.
+- Xerg 0.24.2 certifies Hermes state schemas 16-25. A Hermes operator may separately install the optional observer described in [Hermes analysis](https://xerg.ai/docs/hermes-analysis). When present, Xerg reads its content-free events and bounded health state; this skill does not install, configure, start, restart, or modify observer state. Before new Xerg-directed Hermes activity, run `xerg doctor --runtime hermes --require-observer-live`; failed preflight exits `5`, and repairs cover only future activity. Existing aggregate audits remain available with their limitation before totals and conclusions.
 - Hermes v0.20 terminal generated/truncated values may be conservative byte floors and render as “At least”; returned bytes remain exact, and Xerg never dereferences a Hermes spill path. Xerg 0.24.0 terminal mechanics were not certified for v0.20.x and could understate these values. Hermes v0.20.1 auxiliary tasks such as `title_generation` remain task-scoped aggregates when public request hooks do not expose them; their economics stay included and their sequence analysis stays explicitly unavailable.
 - QM currently supports one-shot snapshot, strict direct, and Fly-contained collection. Strict direct mode uses a dedicated export-view-only reader. Fly Managed Postgres instead uses a disclosed one-shot process boundary inside QM core and does not claim database least privilege. Both use a backed-up identity key and HMAC raw IDs before persistence; content fields are not exported, and `openrouter/auto` placeholders remain unpriced. Offline QM Slack audits accept only an authorized pre-created snapshot. The CLI must be explicitly approved, provisioned, and version-verified by an operator in the administrator's private runtime; agents must not install it implicitly or initiate live collection. The runtime receives no database URL, identity key, Fly token, provider credential, or Xerg credential. Continuous follow capture, durable tool-history capture beyond QM's retention window, and live Slack-triggered collection are not currently supported.
 - Both trace collectors bind only to loopback, sanitize before persistence, receive traces only, and never push automatically. `analysisCoverage`, `toolActivity`, and `workloadEconomics` remain local.
 - Remote OpenClaw audits pull selected files to local temporary storage before analysis.
 - Xerg Cloud sync only happens when you run `connect`, `audit --push`, or `push`.
 - Push payloads include audit totals, rollups, findings, recommendations, comparison deltas, and source metadata. They exclude raw prompt and response content, local source file paths, local snapshot store paths, and internal finding details.
-- Push v7 carries separate content-free findings, signals, per-detector coverage, and daily pricing coverage. Signals may include an optional human-readable workflow/run label; current producers also add an optional requested audit interval, detector-attributed workflow waste, detector-versioned comparison finding changes, observed immediate parent-to-child agent-delegation rollups, and comparison pricing availability. Delegation spend is already included in child and audit totals and must not be added again. Monetary comparison fields are usable only when `spendComparisonAvailable` is explicitly true; identified-waste deltas additionally require `wasteComparisonAvailable`. Older v7/v6 payloads remain valid without those additive fields. Push v6 remains accepted and meters identically from daily runtime spend. Evidence references and internal details stay local.
+- Push v7 carries separate content-free findings, signals, per-detector coverage, and daily pricing coverage. Signals may include an optional human-readable workflow/run label; current producers also add an optional requested audit interval, detector-attributed workflow waste, detector-versioned comparison finding changes, observed immediate parent-to-child agent-delegation rollups, and comparison pricing availability. Delegation rows show spend that is already counted in the child row and the audit total; never add them again. Monetary comparison fields are usable only when `spendComparisonAvailable` is explicitly true; identified-waste deltas additionally require `wasteComparisonAvailable`. Older v7/v6 payloads remain valid without those additive fields. Push v6 remains accepted and meters identically from daily runtime spend. Evidence references and internal details stay local.
 - Local snapshots may contain versioned diagnostic packets with digests, byte counts, local paths, and inspection guidance. Raw or truncated tool arguments/results are never stored, and diagnostics, digests, paths, and per-TTL cache buckets never cross Push v7.
 - Runtime costs may be observed, locally estimated, or unpriced. They are not authoritative provider invoices; Xerg does not currently ingest provider bills, reconcile invoices, or convert runtime audits to FOCUS.
 
