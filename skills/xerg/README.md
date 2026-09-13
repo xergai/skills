@@ -116,7 +116,7 @@ The preview prints the intended payload and should be summarized locally rather 
 - `mcp-setup` prints or writes hosted MCP config for supported clients
 - hosted Optimizations can copy a Fix with Xerg task; paid hosted MCP exposes `xerg_get_optimization({ optimization_id })` to retrieve the same content-free handoff without changing code or policy
 - paid workspace admins can connect Linear and create one sanitized, one-way issue per Optimization; the integration does not synchronize issue status or change the Optimization automatically
-- after an approved push, Overview leads with strictly validated seven-day before/after savings when available, keeps current waste separate, and can group identified-waste rates by department or runtime posture; runtime posture remains Not set until a workspace admin assigns `vpc`, `on-prem`, `saas`, `local`, `hybrid`, or `air-gap`, and is never inferred from audit evidence. Audit Detail adds daily Performance and detector-attributed Workflow economics, while Compare retains outcome evidence and Signal guidance remains explicitly non-monetary
+- after an approved push, Fleet Overview leads with strictly validated seven-day before/after savings when available, keeps current waste separate, and can group identified-waste rates by department or runtime posture; runtime posture remains Not set until a workspace admin assigns `vpc`, `on-prem`, `saas`, `local`, `hybrid`, or `air-gap`, and is never inferred from audit evidence. Audit Detail adds daily Performance and detector-attributed Workflow economics, while Compare retains outcome evidence and Signal guidance remains explicitly non-monetary
 - local audits and compare remain available if you skip hosted setup
 
 ## Restricted environments
