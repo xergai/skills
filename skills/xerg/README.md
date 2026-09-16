@@ -4,7 +4,9 @@ Reviewed CLI version: **0.34.0**.
 
 This already-published CLI pin is reviewed independently of the skill's release version. New skill or package releases do not authorize an automatic pin change.
 
-This skill uses the exact reviewed CLI version, including doctor-generated follow-up commands. Bare `xerg` examples below require an explicitly approved installation verified with `xerg --version` against that version. Stop on a mismatch; do not silently upgrade or substitute another version. The pin selects the top-level npm package, not its transitive dependencies or cryptographic integrity. Permission to install, inspect local data, access a remote source, or upload remains separate.
+This skill uses the exact reviewed CLI version, including doctor-generated follow-up commands. Bare `xerg` examples below require an explicitly approved installation verified with `xerg --version` against that version. Stop on a mismatch; do not silently upgrade or substitute another version. The pin selects the top-level npm package, not its transitive dependencies or cryptographic integrity. Permission to install, inspect local data, or upload remains separate.
+
+Remote SSH, Railway, and remote-config execution is temporarily disabled for skill-directed work because the reviewed CLI 0.34.0 predates the remote-execution security correction. Export approved evidence to the local machine and use a local path. The reviewed CLI pin remains `0.34.0`; the skill must not construct or run remote commands until a later reviewed skill explicitly lifts this restriction.
 
 Find wasted AI spend in OpenClaw, Hermes, QM, Claude Code, Cursor, and any framework that can export a JSON event payload.
 
@@ -34,7 +36,7 @@ npx --yes --package=skills@1.5.25 skills add 'https://github.com/xergai/skills/t
 
 The command leaves agent selection and installation scope interactive; `npx --yes` only accepts the approved package download. The installer version and source revision are both explicit; this does not pin transitive dependencies or provide a cryptographic integrity guarantee. If no reviewed SHA is available, stop the installer step or import an already-reviewed local skill folder through your host's supported flow after permission. Current-session use of the fetched skill still requires its separate permissions and must not persist it implicitly. A CLI version pin does not establish that an older package's bundled skill is the corrected revision.
 
-Then ask your agent to audit your AI spend. Installation does not authorize local inspection, remote access, or upload; the agent asks separately and explains the findings.
+Then ask your agent to audit your AI spend. Installation does not authorize local inspection or upload; the agent asks separately and explains the findings.
 
 Install the CLI directly:
 
@@ -83,8 +85,6 @@ xerg audit --otlp-file ./openclaw.capture.jsonl
 
 Add `--runtime openclaw`, `--runtime hermes`, or `--runtime claude-code` when more than one local runtime is detected. QM is never auto-detected and always uses `--runtime qm` after administrator setup.
 
-SSH and Railway comparison identity includes the normalized `--since` window and, when mixed OpenClaw source authority is engaged, the source-authority version. Equivalent values such as `024h` and `24h` share identity; a different window intentionally starts a separate comparison and hosted-dedup history. The first corrected mixed remote `--compare` run after upgrading to 0.28.0 has no compatible pre-0.28 baseline; the next mixed run with the same target, paths, and window compares normally. Single-kind remote keys are unchanged.
-
 ## Sources
 
 - Local machine: OpenClaw, Hermes, and Claude Code (`xerg audit --runtime claude-code`)
@@ -93,9 +93,9 @@ SSH and Railway comparison identity includes the normalized `--since` window and
 - Certified local Hermes trace enrichment: `xerg collect hermes --state-db <path>` or `xerg audit --runtime hermes --state-db <path> --otlp-file <capture.jsonl>`
 - Local Cursor usage export: `xerg audit --cursor-usage-csv ./cursor-usage.csv`
 - Any framework's exported event payload: `xerg ingest --file payload.json`
-- Remote OpenClaw sources via SSH or configured remote transports
+- OpenClaw evidence exported from another host and supplied through an approved local path
 
-If local defaults are empty, inspect the target directly first with `xerg doctor --remote user@host`.
+If local defaults are empty, export the approved evidence to the local machine and pass an explicit local path.
 
 When OpenClaw gateway logs and session transcripts both produce calls in the requested window, Xerg uses transcripts as the sole authority for totals and analysis and excludes gateway runs. This prevents additive accounting when the same activity is present in both formats. Transcripts preserve agent, lineage, and per-tool evidence, but can omit gateway-only activity; mixed reports therefore warn that activity and spend may be understated and findings may differ from a fully reconciled view. Gateway-only and transcript-only audits are unchanged. Use only `--log-file` or only `--sessions-dir` to select one local source kind explicitly.
 
@@ -121,7 +121,7 @@ The preview prints the intended payload and should be summarized locally rather 
 
 ## Restricted environments
 
-Use an already installed or prefetched `@xerg/cli@0.34.0` when runtime package downloads are prohibited. Before a disconnected local audit, set `XERG_NO_UPDATE_CHECK=1` or `CI=1`, provide a dedicated writable XDG data directory for snapshots, and mount only the explicitly approved source files or directories read-only. Keep Xerg authentication and remote-source configuration outside the environment unless the user separately approves the applicable hosted or remote operation. SSH, Railway, pairing, and upload are networked modes.
+Use an already installed or prefetched `@xerg/cli@0.34.0` when runtime package downloads are prohibited. Before a disconnected local audit, set `XERG_NO_UPDATE_CHECK=1` or `CI=1`, provide a dedicated writable XDG data directory for snapshots, and mount only the explicitly approved source files or directories read-only. Keep Xerg authentication outside the environment unless the user separately approves the applicable hosted operation. Pairing and upload are networked modes.
 
 The registry's `dist.integrity` value can verify registry transport and cache bytes for the exact package, but it is not independent publisher provenance and does not cover the package's transitive dependency graph. The pushed payload contract is published in the MIT-licensed `@xerg/schemas` package; use `push --dry-run` to inspect the exact intended payload locally before separately approving an upload.
 
@@ -135,7 +135,7 @@ The registry's `dist.integrity` value can verify registry transport and cache by
 - Hermes v0.20 terminal generated/truncated values may be conservative byte floors and render as “At least”; returned bytes remain exact, and Xerg never dereferences a Hermes spill path. Xerg 0.24.0 terminal mechanics were not certified for v0.20.x and could understate these values. Hermes v0.20.1 auxiliary tasks such as `title_generation` remain task-scoped aggregates when public request hooks do not expose them; their economics stay included and their sequence analysis stays explicitly unavailable.
 - QM currently supports one-shot snapshot, strict direct, and Fly-contained collection. Strict direct mode uses a dedicated export-view-only reader. Fly Managed Postgres instead uses a disclosed one-shot process boundary inside QM core and does not claim database least privilege. Both use a backed-up identity key and HMAC raw IDs before persistence; content fields are not exported, and `openrouter/auto` placeholders remain unpriced. Offline QM Slack audits accept only an authorized pre-created snapshot. The CLI must be explicitly approved, provisioned, and version-verified by an operator in the administrator's private runtime; agents must not install it implicitly or initiate live collection. The runtime receives no database URL, identity key, Fly token, provider credential, or Xerg credential. Continuous follow capture, durable tool-history capture beyond QM's retention window, and live Slack-triggered collection are not currently supported.
 - Both trace collectors bind only to loopback, sanitize before persistence, receive traces only, and never push automatically. `analysisCoverage`, `toolActivity`, and `workloadEconomics` remain local.
-- Remote OpenClaw audits pull selected files to local temporary storage before analysis.
+- Evidence copied from another host must be reviewed and placed in an explicitly approved local path before analysis.
 - Xerg Cloud sync only happens when you run `connect`, `audit --push`, or `push`.
 - Push payloads include audit totals, rollups, findings, recommendations, comparison deltas, and source metadata. They exclude raw prompt and response content, local source file paths, local snapshot store paths, and internal finding details.
 - Push v7 carries separate content-free findings, signals, per-detector coverage, and daily pricing coverage. Signals may include an optional human-readable workflow/run label; current producers also add an optional requested audit interval, detector-attributed workflow waste, detector-versioned comparison finding changes, observed immediate parent-to-child agent-delegation rollups, and comparison pricing availability. Delegation rows show spend that is already counted in the child row and the audit total; never add them again. Monetary comparison fields are usable only when `spendComparisonAvailable` is explicitly true; identified-waste deltas additionally require `wasteComparisonAvailable`. Older v7/v6 payloads remain valid without those additive fields. Push v6 remains accepted and meters identically from daily runtime spend. Evidence references and internal details stay local.

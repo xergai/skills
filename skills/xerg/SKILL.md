@@ -28,15 +28,6 @@ metadata:
       - name: "@xerg/cli"
         type: npm
         url: https://www.npmjs.com/package/@xerg/cli
-      - name: ssh
-        type: other
-        url: https://www.openssh.com/
-      - name: rsync
-        type: other
-        url: https://rsync.samba.org/
-      - name: railway
-        type: npm
-        repository: https://github.com/railwayapp/cli
       - name: fly
         type: other
         url: https://fly.io/docs/flyctl/
@@ -48,7 +39,9 @@ Reviewed CLI version: **0.34.0**.
 
 The reviewed CLI pin is independent of the skill's release version. It selects an already-published, compatible package; a newer skill or package release does not itself authorize changing this pin.
 
-Use this exact version for every skill-directed CLI action. The npm commands below select it explicitly; bare `xerg` examples are shorthand only for an explicitly approved installation whose `xerg --version` equals the reviewed version. Stop on a mismatch and request approval for the pinned installation; do not silently upgrade, use a mutable dist-tag, or fall back to another installed version. This pins the top-level CLI package, not its transitive dependencies or cryptographic integrity. Installation, local inspection, remote access, and hosted writes still require their separate permissions. Use browser pairing instead of requesting or displaying credential contents; the approved CLI manages its own authentication state.
+Use this exact version for every skill-directed CLI action. The npm commands below select it explicitly; bare `xerg` examples are shorthand only for an explicitly approved installation whose `xerg --version` equals the reviewed version. Stop on a mismatch and request approval for the pinned installation; do not silently upgrade, use a mutable dist-tag, or fall back to another installed version. This pins the top-level CLI package, not its transitive dependencies or cryptographic integrity. Installation, local inspection, and hosted writes still require their separate permissions. Use browser pairing instead of requesting or displaying credential contents; the approved CLI manages its own authentication state.
+
+Remote SSH, Railway, and remote-config execution is temporarily disabled for skill-directed work because the reviewed CLI 0.34.0 predates the remote-execution security correction. Do not construct, recommend, or run a remote Xerg command, even if the installed CLI still exposes remote flags. Ask the user to export the approved evidence to the local machine and use a local path instead. This restriction remains in force until a later reviewed skill explicitly lifts it; the reviewed CLI version remains **0.34.0**.
 
 Xerg is a local-first CLI for finding wasted AI runtime spend. Runtime audits separate three evidence-strict monetary findings from seven neutral signals, report detector coverage, and use `--compare` to measure compatible changes. Runtime costs may be observed, locally estimated, or unpriced; they are not authoritative provider invoices.
 
@@ -117,14 +110,11 @@ If no local data is found, `doctor` prints the paths it checked. Fallbacks:
 - Existing sanitized OpenClaw trace capture: `npx --yes @xerg/cli@0.34.0 audit --otlp-file <capture.jsonl>`
 - New local OpenClaw trace capture: `npx --yes @xerg/cli@0.34.0 collect openclaw` (interactive until `Ctrl-C`; use only when the user asks to collect a workload)
 - Certified local Hermes trace enrichment: `npx --yes @xerg/cli@0.34.0 collect hermes --state-db <path>` (interactive until `Ctrl-C`; state.db remains required)
-- Remote OpenClaw over SSH: `npx --yes @xerg/cli@0.34.0 audit --remote user@host`
-- Railway-hosted OpenClaw: `npx --yes @xerg/cli@0.34.0 audit --railway`
+- OpenClaw evidence exported from another host: place the approved export on the local machine, then select it with a local `--log-file`, `--sessions-dir`, `--openclaw-db`, or `--otlp-file` path
 - Existing QM snapshot: `npx --yes @xerg/cli@0.34.0 audit --runtime qm --qm-snapshot <snapshot.jsonl>`
 - Configured QM direct/Fly source: an operator collects outside Slack; follow the private-scope procedure below only for an authorized snapshot
 
 Use the `npx --yes @xerg/cli@0.34.0` path for first-run and rerun analysis so an old global CLI cannot reintroduce the retired name-only detector. A user may choose an explicitly approved global install verified against this skill's reviewed version. A newer-version notice is informational, not permission to change the pin; update the skill and approve its reviewed CLI version before using that version for skill-directed work.
-
-Remote comparison identity includes the normalized `--since` window and, when mixed OpenClaw source authority is engaged, the source-authority version. Treat `024h` and `24h` as equivalent and omitted `--since` as `all`. Never claim comparison or hosted dedup continuity across either the pre-0.22 window boundary or the pre-0.28 mixed-source boundary. The first corrected mixed remote `--compare` run has no compatible older baseline; the next mixed run with the same target, paths, and window compares normally. Single-kind keys are unchanged. A first push across the mixed-source boundary may consume one Free snapshot or receive the existing at-quota response.
 
 ## What It Audits
 
