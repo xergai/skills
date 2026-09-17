@@ -18,6 +18,20 @@ Hosted pricing uses Monthly Audited Agent Spend from known spend in explicitly p
 
 The `npx @xerg/cli@0.35.2` path may fetch and execute the exact published npm package before running Xerg. After explicit approval, install it once with `npm install -g @xerg/cli@0.35.2` if you prefer a global installation.
 
+## Installation and discovery
+
+| Host or surface | Installation or discovery path | Review boundary |
+| --- | --- | --- |
+| Terminal-capable agent | [Canonical skill](https://xerg.ai/skill.md) | Review fetched content before use; this mutable URL does not pin a revision or install it persistently. |
+| Agent Skills hosts | [Public repository](https://github.com/xergai/skills), discoverable on [skills.sh](https://www.skills.sh/xergai/skills/xerg) | Use `skills@1.5.25` and an operator-reviewed full repository SHA; keep host and scope selection interactive. |
+| OpenClaw | [ClawHub `@xerg/xerg`](https://clawhub.ai/xerg/skills/xerg) | Select and review an exact skill version and its files; never substitute the bare `xerg` slug. |
+| Hermes | [Legacy discovery index](https://xerg.ai/.well-known/skills/index.json) or a reviewed raw GitHub Markdown URL | A full repository SHA in the raw URL fixes the source revision; the discovery index and hosted skill URL are mutable. |
+| Local folder import | The Xerg `SKILL.md` bundled inside the approved npm CLI package | Review the bundled file independently; its instructions can differ from the current skill release. |
+
+Installation, package download, local inspection, remote access, workspace connection, payload preview, and upload require their own applicable approvals. A listing or successful installation does not certify the skill, authorize execution, or establish current artifact identity.
+
+The accepted package and skill release is **0.35.3**. Its instructions deliberately select the independently reviewed CLI **0.35.2**; the release version and executable review pin are separate identities.
+
 ## Install
 
 Give a terminal-capable agent the universal cold-fetch prompt:
@@ -49,6 +63,12 @@ Or run without installing:
 ```bash
 npx @xerg/cli@0.35.2 init
 ```
+
+## Native host installation
+
+The [native host installation guide](https://xerg.ai/docs/skill-bundle#native-host-installation) provides the reviewed-version OpenClaw command and full-SHA Hermes URL procedure. Installation and host discovery were exercised with OpenClaw **2026.9.4** on Node **24.16.0**, and Hermes **0.21.0** at commit `29112bef099274229cadff79cdff7bf7b99c4b77` on Python **3.12.14**. This does not certify model execution or other host revisions.
+
+Use an already-approved host installation, review the selected skill's exact files, and keep native security checks and confirmation enabled. Stop on a blocked install. The skill version is separate from its reviewed CLI pin, and installation does not authorize running the CLI or inspecting runtime data. A mutable hosted URL is not equivalent to the guide's reviewed full-SHA source.
 
 ## What It Finds
 
